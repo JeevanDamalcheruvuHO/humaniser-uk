@@ -1,125 +1,99 @@
 # humaniser-uk
 
-A **UK English** fork of the [`humanizer`](https://github.com/blader/humanizer) skill for Claude — it removes the tells of AI-generated writing (inflated significance, promotional language, em-dash overuse, rule-of-three, AI vocabulary, sycophancy, and so on) so text reads as if a person wrote it.
+Paste in text that sounds like it was written by an AI, and this skill rewrites it so it reads like a real person wrote it — in **British English**.
 
-This fork tracks upstream closely. The only intended differences are:
-
-- **British spellings** throughout (`humanise`, `colour`, `analyse`, `organisation`, `judgement`, …).
-- **One example swapped** to a UK outlet (*The Guardian* / *The Times* instead of US/Indian papers).
-- A self-contained **"Step 0" self-update mechanism** and a **UK Customisation Manifest** baked into `SKILL.md`, so the fork can re-sync itself when upstream changes.
-
-Current version: **`2.8.0-uk.1`** (tracks upstream `humanizer` **2.8.0**).
-
-The whole skill is the single file [`SKILL.md`](SKILL.md).
+It's a UK-spelling fork of the excellent [`humanizer`](https://github.com/blader/humanizer) skill for Claude. Same job, same patterns, just `colour` instead of `color`.
 
 ---
 
-## Using it across your devices
+## What it actually does
 
-Claude stores skills differently depending on the surface, so there are two paths. You can use either or both.
+AI writing has tics. It over-eggs how *important* everything is, loves the word "vibrant", stacks things in threes, sprinkles em dashes everywhere, and ends on a cheery "the future looks bright!". Most readers can feel it even if they can't name it.
 
-### Claude Code (CLI) — per machine, synced with git
+This skill spots those tics and rewrites them out. A few examples of what it changes:
 
-Personal skills live in `~/.claude/skills/<name>/`. Clone this repo straight into that folder on each machine you use:
+| It sees this (AI-ish) | It gives you this (human) |
+|---|---|
+| "marking a pivotal moment in the evolution of…" | "was set up in 1989 to collect regional statistics" |
+| "nestled within the breathtaking region of…" | "is a town in the Gonder region" |
+| "Great question! I hope this helps! Let me know if…" | *(gone — that's chatbot chatter, not content)* |
+| "It's not just a song, it's a statement." | "The heavy beat adds to the aggressive tone." |
+| "institutions—not the people—yet this continues—" | "institutions, not the people, yet this continues" |
+
+It also does a second pass on its own work, asking *"what still sounds AI here?"* and fixing what's left. Full details and all the patterns live in [`SKILL.md`](SKILL.md).
+
+---
+
+## Get it on your devices
+
+You use Claude in more than one place, so there are two ways in. Do whichever ones you use.
+
+### On your computer (Claude Code in the terminal)
+
+Copy the skill into Claude Code's skills folder with one command:
 
 ```bash
-git clone git@github.com:JeevanDamalcheruvuHO/humaniser-uk.git ~/.claude/skills/humaniser
+git clone https://github.com/JeevanDamalcheruvuHO/humaniser-uk.git ~/.claude/skills/humaniser
 ```
 
-(or with HTTPS: `git clone https://github.com/JeevanDamalcheruvuHO/humaniser-uk.git ~/.claude/skills/humaniser`)
-
-That's it — Claude Code discovers it as the `humaniser` skill. To pull later updates on any machine:
+That's it. Claude Code now knows the `humaniser` skill. To get newer versions later:
 
 ```bash
 cd ~/.claude/skills/humaniser && git pull
 ```
 
-If you'd rather keep the repo elsewhere and symlink it (so one `git pull` updates every checkout on the machine):
+*(Use OpenCode too? It reads the same `~/.claude/skills/` folder, so this single clone covers both.)*
 
-```bash
-git clone git@github.com:JeevanDamalcheruvuHO/humaniser-uk.git ~/code/humaniser-uk
-ln -s ~/code/humaniser-uk ~/.claude/skills/humaniser
-```
+### On the Claude app (web, desktop, phone)
 
-### Claude apps (web, desktop, mobile) — synced via your account
+Skills you add to your account follow you to every device you sign in on — you only do this once:
 
-Skills uploaded to your Anthropic account follow you across claude.ai, the desktop app, and mobile automatically — you upload once.
-
-1. Download this repo (clone it, or use **Code → Download ZIP** on GitHub).
-2. In the Claude app, open **Settings → Capabilities** (the section may be labelled *Skills*) and **add / upload a skill**, pointing it at the folder that contains `SKILL.md`.
-3. It's now available on every device where you're signed in. Re-upload after a version bump to refresh it.
-
-### How to invoke it
-
-Once installed, just ask, e.g.:
-
-```
-Humanise this text: <paste text>
-```
-
-Optionally give it a writing sample to match your voice:
-
-```
-Humanise this. Match my style from notes/my-writing.md
-```
+1. Download this repo: green **Code** button on GitHub → **Download ZIP**, then unzip.
+2. In the Claude app, open **Settings → Capabilities** (it may say **Skills**) and **add a skill**, pointing it at the unzipped folder (the one with `SKILL.md` inside).
+3. Done — it's now on web, desktop, and mobile. Re-add it after an update to refresh.
 
 ---
 
-## Keeping it up to date with upstream
+## How to use it
 
-The original `humanizer` skill is actively maintained, so new pattern sections and refinements land upstream regularly. There are two ways to bring those in. They stack: use **A** to do the transformation, **B** to distribute the result to all your devices.
+Just ask, in plain English:
 
-### Option A — built-in self-update (easiest)
+```
+Humanise this for me:
 
-`SKILL.md` contains a **"Step 0: Upstream Self-Update Check"** that runs when the skill is invoked. It:
-
-1. fetches upstream `SKILL.md` from `blader/humanizer`,
-2. compares the upstream `version:` against this fork's `upstream-version:`,
-3. if upstream is newer, summarises what changed and offers to **re-apply the UK Customisation Manifest** and rewrite the file.
-
-So in practice: invoke the skill now and then, and when it reports a new upstream version, say **"update now"**. It re-applies the British spellings, the example swap, and the manifest, then bumps the version (e.g. `2.8.0-uk.1` → `2.9.0-uk.1`).
-
-> Sanity-check the result before committing. The spelling substitutions are mechanical, but larger upstream rewrites deserve a quick read of the `git diff` — which is exactly why keeping this in a repo (rather than editing the live skill in place) is worth it.
-
-### Option B — git workflow (reproducible, multi-device)
-
-Treat this repo as the single source of truth and track upstream as a remote:
-
-```bash
-# one-time
-git remote add upstream https://github.com/blader/humanizer.git
-
-# whenever you want to check for updates
-git fetch upstream
-git log --oneline HEAD..upstream/main -- SKILL.md   # what changed upstream?
+[paste your text]
 ```
 
-If there's a new upstream version:
+Want it to sound like *you* rather than generically "clean"? Give it a sample of your own writing first:
 
-1. Regenerate the UK file — let Option A's self-update do the re-application, **or** apply the **UK Customisation Manifest** (the section near the top of `SKILL.md`) by hand. The manifest is the canonical list of every intended difference from upstream: frontmatter tweaks, the spelling table, the targeted phrase swaps, the example outlet swaps, and the title change.
-2. Commit the regenerated file with the new version number:
-   ```bash
-   git add SKILL.md && git commit -m "humaniser X.Y.Z-uk.1 (track upstream X.Y.Z)"
-   git push
-   ```
-3. On your other machines: `git pull`. In the Claude apps: re-upload.
+```
+Here are a couple of paragraphs I wrote, for the style:
+[paste your writing]
 
-### The UK Customisation Manifest
+Now humanise this:
+[paste the AI text]
+```
 
-Everything that makes this a UK fork is documented as an explicit, repeatable checklist inside `SKILL.md` under **"UK Customisation Manifest"** (sections A–G): frontmatter, the US→UK spelling table, targeted phrase swaps, the example outlet swaps, the title change, and the rule to preserve the self-update section. As long as you re-apply that manifest after each upstream pull, the fork stays a clean, minimal delta over upstream rather than drifting.
+It studies your rhythm and word choices and matches them.
 
-### Versioning
+---
 
-`X.Y.Z-uk.N` where:
+## Keeping it current
 
-- `X.Y.Z` mirrors the upstream `humanizer` version this fork was synced against.
-- `-uk.N` increments when the manifest or fork-specific content changes without an upstream bump.
+The original `humanizer` gets better over time. Pulling those improvements into this UK version is meant to be painless. Two ways:
+
+- **The easy way:** just use the skill and, now and then, ask it to **"check for updates from upstream."** It fetches the latest original, re-applies the British-spelling changes automatically, and tells you what's new. Say yes and it updates itself.
+- **The repo way (for keeping several machines in step):** in `~/code/humaniser-uk` (or wherever you keep this), run `git pull` to get the newest version, and `git push` after you've updated it.
+
+Behind the scenes, every difference between this fork and the original is written down as a tidy checklist (the "UK Customisation Manifest" inside `SKILL.md`), so updates stay clean instead of drifting. If you ever ask an AI assistant to do the update for you, point it at [`AGENTS.md`](AGENTS.md) — that's the step-by-step recipe.
+
+**Version numbers** look like `2.8.0-uk.1`: the `2.8.0` is the original version this is built from, and `-uk.1` is the UK revision on top of it.
 
 ---
 
 ## Credits & licence
 
 - Original skill: **[`blader/humanizer`](https://github.com/blader/humanizer)** by Siqi Chen, based on [Wikipedia: Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing) (WikiProject AI Cleanup).
-- UK English adaptations: this fork.
+- British-English version: this fork.
 
-Licensed under the [MIT License](LICENSE), the same terms as upstream.
+[MIT licensed](LICENSE), same as the original.
