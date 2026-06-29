@@ -74,12 +74,49 @@ It studies your sentence rhythm, word choices, and quirks, then applies them to 
 
 ## Keeping it current
 
-The original `humanizer` gets better over time. Pulling those improvements into this UK version is meant to be painless. Two ways:
+The original `humanizer` gets better over time. This fork is built to pull those improvements in, re-apply the British-English changes, and publish the result — so every device stays on the latest content. There are two ways to do it.
 
-- **The easy way:** just use the skill and, now and then, ask it to **"check for updates from upstream."** It fetches the latest original, re-applies the British-spelling changes automatically, tells you what's new, and updates itself if you say yes.
-- **The repo way (for keeping several machines in step):** in `~/code/humaniser-uk` (or wherever you keep this), run `git pull` to get the newest version, and `git push` after you've updated it.
+### The easy way (let the assistant do it)
 
-Behind the scenes, every difference between this fork and the original is written down as a tidy checklist (the **UK Customisation Manifest** inside `SKILL.md`), so updates stay a clean, minimal delta instead of drifting. If you ask an AI assistant to do the update for you, point it at [`AGENTS.md`](AGENTS.md) — that's the step-by-step recipe.
+Just use the skill and, now and then, ask it to **"check for updates from upstream and update the UK version."** The skill fetches the latest original, compares versions, tells you what changed, re-applies the British spellings and example swaps automatically, and bumps the version. Say yes, then `git push` (below) to publish.
+
+### The manual way (pull → convert → push)
+
+Everything that makes this a UK fork is a tidy checklist — the **UK Customisation Manifest** inside [`SKILL.md`](SKILL.md) — so an update is always: take the new upstream file, re-apply that checklist, push.
+
+**One-time setup** (the maintainer's clone already has this; a fresh clone needs it):
+
+```bash
+cd ~/code/humaniser-uk
+git remote add upstream https://github.com/blader/humanizer.git
+git remote set-url --push upstream DISABLED   # never push to the original by accident
+```
+
+**Each time you want the latest:**
+
+```bash
+# 1. Get the latest original and see if it moved
+git fetch upstream
+git show upstream/main:SKILL.md | grep '^version:'      # upstream's version
+grep '^upstream-version:' SKILL.md                      # what this fork is built from
+
+# 2. If they differ, see exactly what changed upstream
+git diff <last-synced-upstream-commit> upstream/main -- SKILL.md
+```
+
+**3. Convert to the UK version.** Apply the new upstream changes to `SKILL.md`, then walk the **UK Customisation Manifest** (sections A–G) so the British spellings, the *Guardian/Times* example swap, and the fork-only sections are re-applied. This is fiddly by hand, so the simplest path is to ask an AI assistant — *"update this fork to the latest upstream and re-apply the UK manifest"* — and point it at [`AGENTS.md`](AGENTS.md), which is the exact step-by-step recipe. Then bump the frontmatter: `version: X.Y.Z-uk.1` and `upstream-version: X.Y.Z`, and add a line to this README's version history.
+
+**4. Publish it:**
+
+```bash
+git add SKILL.md README.md
+git commit -m "humaniser X.Y.Z-uk.1: sync upstream A.B.C -> X.Y.Z"
+git push
+```
+
+**5. Refresh your other devices:** on each computer running Claude Code, `git pull` (or nothing, if it's symlinked to this clone); in the Claude app, re-upload the skill.
+
+> Tip: never `git merge upstream/main` — this fork diverges from the original on purpose (spelling + the extra sections), so a merge just causes conflicts. Always *re-apply the manifest* instead.
 
 ---
 
