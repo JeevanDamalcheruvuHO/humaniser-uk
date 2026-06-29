@@ -25,11 +25,11 @@ The frontmatter `version:` is `X.Y.Z-uk.N`; `upstream-version:` is the plain `X.
 
 ## How to update from upstream (the main task)
 
-1. **Fetch upstream `SKILL.md`:**
+1. **Fetch upstream `SKILL.md`.** This repo already has a pull-only `upstream` remote configured (`https://github.com/blader/humanizer.git`, tracking `main`, push URL disabled), so:
    ```
-   https://raw.githubusercontent.com/blader/humanizer/main/SKILL.md
+   git fetch upstream && git show upstream/main:SKILL.md
    ```
-   (or `git fetch` a clone of `https://github.com/blader/humanizer.git` and read `origin/main:SKILL.md`).
+   (or read the raw file directly: `https://raw.githubusercontent.com/blader/humanizer/main/SKILL.md`).
 
 2. **Compare versions.** Read upstream's frontmatter `version:` and this fork's `upstream-version:`. Equal → nothing to do. Different → continue.
 
@@ -57,3 +57,4 @@ The frontmatter `version:` is `X.Y.Z-uk.N`; `upstream-version:` is the plain `X.
 - Preserve valid YAML frontmatter (formatting and indentation).
 - The prompt below the frontmatter is the product — edit it like a careful instruction document, not code.
 - Keep the fork a thin layer over upstream. If you find yourself wanting to change wording beyond the manifest, reconsider — or capture it as a new manifest item so the next sync re-applies it.
+- **Never `git merge upstream/main` into `main`.** This is a manual re-apply fork, not a merge fork: upstream and this fork diverge by design (spelling + the fork-only sections), so a merge would produce conflicts and US spellings. The `upstream` remote is for fetching and diffing only.
