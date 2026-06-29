@@ -2,7 +2,9 @@
 
 Paste in text that sounds like it was written by an AI, and this skill rewrites it so it reads like a real person wrote it — in **British English**.
 
-It's a UK-spelling fork of the excellent [`humanizer`](https://github.com/blader/humanizer) skill for Claude. Same job, same patterns, just `colour` instead of `color`.
+It's a UK-spelling fork of the excellent [`humanizer`](https://github.com/blader/humanizer) skill for Claude. Same job, same 33 patterns, just `colour` instead of `color` (and a couple of examples swapped to UK papers). It tracks upstream closely — see [What's different](#whats-different-from-the-original) and [`AGENTS.md`](AGENTS.md).
+
+Current version: **`2.8.0-uk.1`** (built from upstream `humanizer` 2.8.0).
 
 ---
 
@@ -10,17 +12,7 @@ It's a UK-spelling fork of the excellent [`humanizer`](https://github.com/blader
 
 AI writing has tics. It over-eggs how *important* everything is, loves the word "vibrant", stacks things in threes, sprinkles em dashes everywhere, and ends on a cheery "the future looks bright!". Most readers can feel it even if they can't name it.
 
-This skill spots those tics and rewrites them out. A few examples of what it changes:
-
-| It sees this (AI-ish) | It gives you this (human) |
-|---|---|
-| "marking a pivotal moment in the evolution of…" | "was set up in 1989 to collect regional statistics" |
-| "nestled within the breathtaking region of…" | "is a town in the Gonder region" |
-| "Great question! I hope this helps! Let me know if…" | *(gone — that's chatbot chatter, not content)* |
-| "It's not just a song, it's a statement." | "The heavy beat adds to the aggressive tone." |
-| "institutions—not the people—yet this continues—" | "institutions, not the people, yet this continues" |
-
-It also does a second pass on its own work, asking *"what still sounds AI here?"* and fixing what's left. Full details and all the patterns live in [`SKILL.md`](SKILL.md).
+This skill spots those tics and rewrites them out, then does a second pass on its own draft — asking *"what still sounds AI here?"* and fixing what's left. The full pattern list with before/after examples is below, and the canonical version lives in [`SKILL.md`](SKILL.md).
 
 ---
 
@@ -36,7 +28,7 @@ Copy the skill into Claude Code's skills folder with one command:
 git clone https://github.com/JeevanDamalcheruvuHO/humaniser-uk.git ~/.claude/skills/humaniser
 ```
 
-That's it. Claude Code now knows the `humaniser` skill. To get newer versions later:
+That's it — Claude Code now knows the `humaniser` skill. To get newer versions later:
 
 ```bash
 cd ~/.claude/skills/humaniser && git pull
@@ -64,17 +56,19 @@ Humanise this for me:
 [paste your text]
 ```
 
+### Match your own voice (optional)
+
 Want it to sound like *you* rather than generically "clean"? Give it a sample of your own writing first:
 
 ```
 Here are a couple of paragraphs I wrote, for the style:
-[paste your writing]
+[paste 2-3 paragraphs of your own writing]
 
 Now humanise this:
 [paste the AI text]
 ```
 
-It studies your rhythm and word choices and matches them.
+It studies your sentence rhythm, word choices, and quirks, then applies them to the rewrite instead of producing generic output.
 
 ---
 
@@ -82,12 +76,144 @@ It studies your rhythm and word choices and matches them.
 
 The original `humanizer` gets better over time. Pulling those improvements into this UK version is meant to be painless. Two ways:
 
-- **The easy way:** just use the skill and, now and then, ask it to **"check for updates from upstream."** It fetches the latest original, re-applies the British-spelling changes automatically, and tells you what's new. Say yes and it updates itself.
+- **The easy way:** just use the skill and, now and then, ask it to **"check for updates from upstream."** It fetches the latest original, re-applies the British-spelling changes automatically, tells you what's new, and updates itself if you say yes.
 - **The repo way (for keeping several machines in step):** in `~/code/humaniser-uk` (or wherever you keep this), run `git pull` to get the newest version, and `git push` after you've updated it.
 
-Behind the scenes, every difference between this fork and the original is written down as a tidy checklist (the "UK Customisation Manifest" inside `SKILL.md`), so updates stay clean instead of drifting. If you ever ask an AI assistant to do the update for you, point it at [`AGENTS.md`](AGENTS.md) — that's the step-by-step recipe.
+Behind the scenes, every difference between this fork and the original is written down as a tidy checklist (the **UK Customisation Manifest** inside `SKILL.md`), so updates stay a clean, minimal delta instead of drifting. If you ask an AI assistant to do the update for you, point it at [`AGENTS.md`](AGENTS.md) — that's the step-by-step recipe.
 
-**Version numbers** look like `2.8.0-uk.1`: the `2.8.0` is the original version this is built from, and `-uk.1` is the UK revision on top of it.
+---
+
+## What's different from the original
+
+This fork is deliberately a thin layer over [`blader/humanizer`](https://github.com/blader/humanizer). The only intended differences:
+
+- **British spellings** throughout (`humanise`, `colour`, `analyse`, `organisation`, `judgement`, `optimise`, …).
+- **Two examples swapped** to UK outlets — *The Guardian* / *The Times* instead of the US/Indian papers in the notability example and the worked example.
+- A **self-update mechanism** ("Step 0") and the **UK Customisation Manifest** baked into `SKILL.md`, so the fork can re-sync itself when upstream changes.
+
+Everything else — the patterns, the wording, the structure — tracks upstream.
+
+---
+
+## Overview
+
+Based on [Wikipedia's "Signs of AI writing"](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing) guide, maintained by WikiProject AI Cleanup. That guide comes from observations of thousands of instances of AI-generated text.
+
+The skill also includes a final "obviously AI generated" audit pass and a second rewrite, to catch lingering AI-isms in the first draft.
+
+> **Key insight from Wikipedia:** "LLMs use statistical algorithms to guess what should come next. The result tends toward the most statistically likely result that applies to the widest variety of cases."
+
+---
+
+## 33 patterns detected (with before/after examples)
+
+### Content patterns
+
+| # | Pattern | Before | After |
+|---|---------|--------|-------|
+| 1 | **Significance inflation** | "marking a pivotal moment in the evolution of…" | "was established in 1989 to collect regional statistics" |
+| 2 | **Notability name-dropping** | "cited in The Times, BBC, FT, and The Guardian" | "In a 2024 Guardian interview, she argued…" |
+| 3 | **Superficial -ing analyses** | "symbolising… reflecting… showcasing…" | Remove, or expand with actual sources |
+| 4 | **Promotional language** | "nestled within the breathtaking region" | "is a town in the Gonder region" |
+| 5 | **Vague attributions** | "Experts believe it plays a crucial role" | "according to a 2019 survey by…" |
+| 6 | **Formulaic challenges** | "Despite challenges… continues to thrive" | Specific facts about the actual challenges |
+
+### Language patterns
+
+| # | Pattern | Before | After |
+|---|---------|--------|-------|
+| 7 | **AI vocabulary** | "Actually… additionally… testament… landscape… showcasing" | "also… remain common" |
+| 8 | **Copula avoidance** | "serves as… features… boasts" | "is… has" |
+| 9 | **Negative parallelisms / tailing negations** | "It's not just X, it's Y", "…, no guessing" | State the point directly |
+| 10 | **Rule of three** | "innovation, inspiration, and insights" | Use the natural number of items |
+| 11 | **Synonym cycling** | "protagonist… main character… central figure… hero" | "protagonist" (repeat when clearest) |
+| 12 | **False ranges** | "from the Big Bang to dark matter" | List the topics directly |
+| 13 | **Passive voice / subjectless fragments** | "No configuration file needed" | Name the actor when it helps clarity |
+
+### Style patterns
+
+| # | Pattern | Before | After |
+|---|---------|--------|-------|
+| 14 | **Em/en dashes** | "institutions—not the people—yet this continues—" | Cut them: full stops, commas, colons, or parentheses |
+| 15 | **Boldface overuse** | "**OKRs**, **KPIs**, **BMC**" | "OKRs, KPIs, BMC" |
+| 16 | **Inline-header lists** | "**Performance:** Performance improved" | Convert to prose |
+| 17 | **Title Case Headings** | "Strategic Negotiations And Partnerships" | "Strategic negotiations and partnerships" |
+| 18 | **Emojis** | "🚀 Launch Phase: 💡 Key Insight:" | Remove emojis |
+| 19 | **Curly quotes** | `said “the project”` | `said "the project"` |
+| 26 | **Hyphenated word pairs** | "cross-functional, data-driven, client-facing" | Drop hyphens on common pairs in predicate position |
+| 27 | **Persuasive authority tropes** | "At its core, what really matters is…" | State the point directly |
+| 28 | **Signposting announcements** | "Let's dive in", "Here's what you need to know" | Start with the content |
+| 29 | **Fragmented headers** | "## Performance" + "Speed matters." | Let the heading do the work |
+| 30 | **Diff-anchored writing** | "This function was added to replace…" | Describe what it does, not what changed |
+| 31 | **Manufactured punchlines / staccato drama** | "It had no preference. No prior. No nostalgia." | Use varied sentence lengths and concrete claims |
+| 32 | **Aphorism formulas** | "Symmetry is the language of trust" | Replace the formula with the actual claim |
+| 33 | **Conversational rhetorical openers** | "Honestly? It depends…" | Remove the fake-candid setup |
+
+### Communication patterns
+
+| # | Pattern | Before | After |
+|---|---------|--------|-------|
+| 20 | **Chatbot artefacts** | "I hope this helps! Let me know if…" | Remove entirely |
+| 21 | **Cutoff disclaimers / speculative gap-filling** | "While details are limited…", "maintains a low profile" | Find sources, say what isn't known, or remove |
+| 22 | **Sycophantic tone** | "Great question! You're absolutely right!" | Respond directly |
+
+### Filler and hedging
+
+| # | Pattern | Before | After |
+|---|---------|--------|-------|
+| 23 | **Filler phrases** | "In order to", "Due to the fact that" | "To", "Because" |
+| 24 | **Excessive hedging** | "could potentially possibly" | "may" |
+| 25 | **Generic conclusions** | "The future looks bright" | Specific plans or facts |
+
+---
+
+## Full example
+
+**Before (AI-sounding):**
+> Great question! Here is an essay on this topic. I hope this helps!
+>
+> AI-assisted coding serves as an enduring testament to the transformative potential of large language models, marking a pivotal moment in the evolution of software development. In today's rapidly evolving technological landscape, these groundbreaking tools—nestled at the intersection of research and practice—are reshaping how engineers ideate, iterate, and deliver, underscoring their vital role in modern workflows.
+>
+> At its core, the value proposition is clear: streamlining processes, enhancing collaboration, and fostering alignment. It's not just about autocomplete; it's about unlocking creativity at scale, ensuring that organisations can remain agile while delivering seamless, intuitive, and powerful experiences to users. The tool serves as a catalyst. The assistant functions as a partner. The system stands as a foundation for innovation.
+>
+> Industry observers have noted that adoption has accelerated from hobbyist experiments to enterprise-wide rollouts, from solo developers to cross-functional teams. The technology has been featured in The Guardian, Wired, and The Verge. Additionally, the ability to generate documentation, tests, and refactors showcases how AI can contribute to better outcomes, highlighting the intricate interplay between automation and human judgement.
+>
+> - 💡 **Speed:** Code generation is significantly faster, reducing friction and empowering developers.
+> - 🚀 **Quality:** Output quality has been enhanced through improved training, contributing to higher standards.
+> - ✅ **Adoption:** Usage continues to grow, reflecting broader industry trends.
+>
+> While specific details are limited based on available information, it could potentially be argued that these tools might have some positive effect. Despite challenges typical of emerging technologies—including hallucinations, bias, and accountability—the ecosystem continues to thrive. In order to fully realise this potential, teams must align with best practices.
+>
+> In conclusion, the future looks bright. Exciting times lie ahead as we continue this journey towards excellence. Let me know if you'd like me to expand on any section!
+
+**After (humanised):**
+> AI coding assistants can speed up the boring parts of the job. They're great at boilerplate: config files and the little glue code you don't want to write. They can also help you sketch a test, but you still have to read it.
+>
+> The dangerous part is how confident the suggestions look. I've accepted code that compiled and passed lint, then discovered later it missed the point because I stopped paying attention.
+>
+> If you treat it like autocomplete and review every line, it's useful. If you use it to avoid thinking, it will help you ship bugs faster.
+>
+> The only real backstop is tests. Without them, you're mostly judging vibes.
+
+(`SKILL.md` walks through this in more detail, including the intermediate draft and the "what still sounds AI?" audit pass.)
+
+---
+
+## References
+
+- [Wikipedia: Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing) — primary source
+- [WikiProject AI Cleanup](https://en.wikipedia.org/wiki/Wikipedia:WikiProject_AI_Cleanup) — the maintaining group
+- [`blader/humanizer`](https://github.com/blader/humanizer) — the upstream skill this forks
+
+---
+
+## Version history
+
+Versions look like `X.Y.Z-uk.N`: the `X.Y.Z` is the upstream `humanizer` version this is built from, and `-uk.N` is the UK revision on top of it.
+
+- **`2.8.0-uk.1`** — first published UK fork. Tracks upstream **2.8.0** (33 patterns, including the style/cadence patterns #31–33 and the hard "cut em/en dashes" rule). Adds British spellings, the UK outlet swaps, the Step 0 self-update check, and the UK Customisation Manifest.
+
+For the full upstream history (what changed in each `humanizer` release), see the original's [version history](https://github.com/blader/humanizer#version-history).
 
 ---
 
@@ -96,4 +222,4 @@ Behind the scenes, every difference between this fork and the original is writte
 - Original skill: **[`blader/humanizer`](https://github.com/blader/humanizer)** by Siqi Chen, based on [Wikipedia: Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing) (WikiProject AI Cleanup).
 - British-English version: this fork.
 
-[MIT licensed](LICENSE), same as the original.
+[MIT licensed](LICENSE), same terms as the original.
