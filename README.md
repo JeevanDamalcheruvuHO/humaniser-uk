@@ -4,7 +4,7 @@ Paste in text that sounds like it was written by an AI, and this skill rewrites 
 
 It's a UK-spelling fork of the excellent [`humanizer`](https://github.com/blader/humanizer) skill for Claude. Same job, same 33 patterns, just `colour` instead of `color` (and a couple of examples swapped to UK papers). It tracks upstream closely — see [What's different](#whats-different-from-the-original) and [`AGENTS.md`](AGENTS.md).
 
-Current version: **`2.8.0-uk.1`** (built from upstream `humanizer` 2.8.0).
+Current version: **`2.8.2-uk.1`** (built from upstream `humanizer` 2.8.2).
 
 ---
 
@@ -211,6 +211,7 @@ The skill also includes a final "obviously AI generated" audit pass and a second
 
 Versions look like `X.Y.Z-uk.N`: the `X.Y.Z` is the upstream `humanizer` version this is built from, and `-uk.N` is the UK revision on top of it.
 
+- **`2.8.2-uk.1`** — tracks upstream **2.8.2**: `compatibility: any-agent`, a new "secondhand text" detection caveat, and a rewritten worked example (a Lisbon travel-blog rewrite). UK-adapted as usual.
 - **`2.8.0-uk.1`** — first published UK fork. Tracks upstream **2.8.0** (33 patterns, including the style/cadence patterns #31–33 and the hard "cut em/en dashes" rule). Adds British spellings, the UK outlet swaps, the Step 0 self-update check, and the UK Customisation Manifest.
 
 For the full upstream history (what changed in each `humanizer` release), see the original's [version history](https://github.com/blader/humanizer#version-history).
