@@ -4,7 +4,7 @@ Paste in text that sounds like it was written by an AI, and this skill rewrites 
 
 It's a UK-spelling fork of the excellent [`humanizer`](https://github.com/blader/humanizer) skill for Claude. Same job, same 33 patterns, just `colour` instead of `color` (and a couple of examples swapped to UK papers). It tracks upstream closely — see [What's different](#whats-different-from-the-original) and [`AGENTS.md`](AGENTS.md).
 
-Current version: **`2.8.2-uk.1`** (built from upstream `humanizer` 2.8.2).
+Current version: **`2.9.1-uk.1`** (built from upstream `humanizer` 2.9.1).
 
 ---
 
@@ -149,7 +149,7 @@ The skill also includes a final "obviously AI generated" audit pass and a second
 | # | Pattern | Before | After |
 |---|---------|--------|-------|
 | 1 | **Significance inflation** | "marking a pivotal moment in the evolution of…" | "was established in 1989 to collect regional statistics" |
-| 2 | **Notability name-dropping** | "cited in The Times, BBC, FT, and The Guardian" | "In a 2024 Guardian interview, she argued…" |
+| 2 | **Notability name-dropping** | "cited in The Times, BBC, FT, and The Guardian" | Keep only what's sourced: "cited in The Times and the BBC" |
 | 3 | **Superficial -ing analyses** | "symbolising… reflecting… showcasing…" | Remove, or expand with actual sources |
 | 4 | **Promotional language** | "nestled within the breathtaking region" | "is a town in the Gonder region" |
 | 5 | **Vague attributions** | "Experts believe it plays a crucial role" | "according to a 2019 survey by…" |
@@ -248,7 +248,8 @@ The skill also includes a final "obviously AI generated" audit pass and a second
 
 Versions look like `X.Y.Z-uk.N`: the `X.Y.Z` is the upstream `humanizer` version this is built from, and `-uk.N` is the UK revision on top of it.
 
-- **`2.8.2-uk.1`** — tracks upstream **2.8.2**: `compatibility: any-agent`, a new "secondhand text" detection caveat, and a rewritten worked example (a Lisbon travel-blog rewrite). UK-adapted as usual.
+- **`2.9.1-uk.1`** — tracks upstream **2.9.1**. Adds a "never invent facts" rule (the audit now also checks for fabricated names, numbers, and citations), **Invocation Modes** (pasted text / file / embedded), and a condensed personality section; the internal worked example was dropped upstream and several pattern examples were tightened. Frontmatter moved to the Agent Skills shape (version now under `metadata:`). UK-adapted as usual.
+- **`2.8.2-uk.1`** — tracks upstream **2.8.2**: `compatibility: any-agent`, a new "secondhand text" detection caveat, and a rewritten worked example. UK-adapted as usual.
 - **`2.8.0-uk.1`** — first published UK fork. Tracks upstream **2.8.0** (33 patterns, including the style/cadence patterns #31–33 and the hard "cut em/en dashes" rule). Adds British spellings, the UK outlet swaps, the Step 0 self-update check, and the UK Customisation Manifest.
 
 For the full upstream history (what changed in each `humanizer` release), see the original's [version history](https://github.com/blader/humanizer#version-history).
