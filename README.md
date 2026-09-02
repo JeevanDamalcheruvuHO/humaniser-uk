@@ -2,9 +2,9 @@
 
 Paste in text that sounds like it was written by an AI, and this skill rewrites it so it reads like a real person wrote it — in **British English**.
 
-It's a UK-spelling fork of the excellent [`humanizer`](https://github.com/blader/humanizer) skill for Claude. Same job, same 33 patterns, just `colour` instead of `color` (and a couple of examples swapped to UK papers). It tracks upstream closely — see [What's different](#whats-different-from-the-original) and [`AGENTS.md`](AGENTS.md).
+It's a UK-spelling fork of the excellent [`humanizer`](https://github.com/blader/humanizer) skill for Claude. Same job, same 35 patterns, just `colour` instead of `color` (and a couple of examples swapped to UK papers). It tracks upstream closely — see [What's different](#whats-different-from-the-original) and [`AGENTS.md`](AGENTS.md).
 
-Current version: **`2.9.1-uk.1`** (built from upstream `humanizer` 2.9.1).
+Current version: **`2.11.2-uk.1`** (built from upstream `humanizer` 2.11.2).
 
 ---
 
@@ -142,65 +142,69 @@ The skill also includes a final "obviously AI generated" audit pass and a second
 
 ---
 
-## 33 patterns detected (with before/after examples)
+## 35 patterns detected (with before/after examples)
+
+Upstream 2.11.0 reworded every pattern into plain language; the names below match the current `SKILL.md`.
 
 ### Content patterns
 
 | # | Pattern | Before | After |
 |---|---------|--------|-------|
-| 1 | **Significance inflation** | "marking a pivotal moment in the evolution of…" | "was established in 1989 to collect regional statistics" |
-| 2 | **Notability name-dropping** | "cited in The Times, BBC, FT, and The Guardian" | Keep only what's sourced: "cited in The Times and the BBC" |
-| 3 | **Superficial -ing analyses** | "symbolising… reflecting… showcasing…" | Remove, or expand with actual sources |
-| 4 | **Promotional language** | "nestled within the breathtaking region" | "is a town in the Gonder region" |
-| 5 | **Vague attributions** | "Experts believe it plays a crucial role" | "according to a 2019 survey by…" |
-| 6 | **Formulaic challenges** | "Despite challenges… continues to thrive" | Specific facts about the actual challenges |
+| 1 | **Inflated claims about importance and legacy** | "marking a pivotal moment in the evolution of…" | "was established in 1989, part of a wider decentralisation" |
+| 2 | **Name-dropping to prove importance** | "cited in The Times, BBC, FT, and The Guardian" | Keep only what's sourced: "cited in The Times and the BBC" |
+| 3 | **Shallow analysis with -ing phrases** | "symbolising… reflecting… showcasing…" | State the fact plainly, drop the -ing padding |
+| 4 | **Sales language** | "nestled within the breathtaking region" | "is a town in the Gonder region" |
+| 5 | **Vague sources** | "Experts believe it plays a crucial role" | Name a real source, or cut the claim |
+| 6 | **Formulaic challenges and outlook sections** | "Despite challenges… continues to thrive" | State the actual facts (from the source) |
 
-### Language patterns
+### Language and grammar patterns
 
 | # | Pattern | Before | After |
 |---|---------|--------|-------|
-| 7 | **AI vocabulary** | "Actually… additionally… testament… landscape… showcasing" | "also… remain common" |
-| 8 | **Copula avoidance** | "serves as… features… boasts" | "is… has" |
-| 9 | **Negative parallelisms / tailing negations** | "It's not just X, it's Y", "…, no guessing" | State the point directly |
-| 10 | **Rule of three** | "innovation, inspiration, and insights" | Use the natural number of items |
-| 11 | **Synonym cycling** | "protagonist… main character… central figure… hero" | "protagonist" (repeat when clearest) |
-| 12 | **False ranges** | "from the Big Bang to dark matter" | List the topics directly |
-| 13 | **Passive voice / subjectless fragments** | "No configuration file needed" | Name the actor when it helps clarity |
+| 7 | **Overused AI words** | "Actually… additionally… testament… landscape… showcasing" | "also… remain common" |
+| 8 | **Avoiding is and are** | "serves as… features… boasts" | "is… has" |
+| 9 | **Not X but Y and clipped negative endings** | "It's not just X, it's Y", "…, no guessing" | State the point directly |
+| 10 | **Forced groups of three** | "innovation, inspiration, and insights" | Use the natural number of items |
+| 11 | **Changing names and repeating sentence openings** | "protagonist… main character… hero"; "She… She… She…" | One clear name; vary or merge the openings |
+| 12 | **False from X to Y ranges** | "from the Big Bang to dark matter" | List the topics directly |
+| 13 | **Passive voice and missing subjects** | "No configuration file needed" | Name the actor when it helps clarity |
 
 ### Style patterns
 
 | # | Pattern | Before | After |
 |---|---------|--------|-------|
-| 14 | **Em/en dashes** | "institutions—not the people—yet this continues—" | Cut them: full stops, commas, colons, or parentheses |
-| 15 | **Boldface overuse** | "**OKRs**, **KPIs**, **BMC**" | "OKRs, KPIs, BMC" |
-| 16 | **Inline-header lists** | "**Performance:** Performance improved" | Convert to prose |
-| 17 | **Title Case Headings** | "Strategic Negotiations And Partnerships" | "Strategic negotiations and partnerships" |
+| 14 | **Em and en dashes** | "institutions—not the people—yet this continues—" | Cut them: full stops, commas, colons, or parentheses |
+| 15 | **Too much bold text** | "**OKRs**, **KPIs**, **BMC**" | "OKRs, KPIs, BMC" |
+| 16 | **Lists with bold mini-headings** | "**Performance:** Performance improved" | Convert to prose |
+| 17 | **Title case in headings** | "Strategic Negotiations And Partnerships" | "Strategic negotiations and partnerships" |
 | 18 | **Emojis** | "🚀 Launch Phase: 💡 Key Insight:" | Remove emojis |
-| 19 | **Curly quotes** | `said “the project”` | `said "the project"` |
-| 26 | **Hyphenated word pairs** | "cross-functional, data-driven, client-facing" | Drop hyphens on common pairs in predicate position |
-| 27 | **Persuasive authority tropes** | "At its core, what really matters is…" | State the point directly |
-| 28 | **Signposting announcements** | "Let's dive in", "Here's what you need to know" | Start with the content |
-| 29 | **Fragmented headers** | "## Performance" + "Speed matters." | Let the heading do the work |
-| 30 | **Diff-anchored writing** | "This function was added to replace…" | Describe what it does, not what changed |
-| 31 | **Manufactured punchlines / staccato drama** | "It had no preference. No prior. No nostalgia." | Use varied sentence lengths and concrete claims |
-| 32 | **Aphorism formulas** | "Symmetry is the language of trust" | Replace the formula with the actual claim |
-| 33 | **Conversational rhetorical openers** | "Honestly? It depends…" | Remove the fake-candid setup |
+| 19 | **Curly quotation marks** | `said “the project”` | `said "the project"` |
 
-### Communication patterns
+### Chatbot patterns
 
 | # | Pattern | Before | After |
 |---|---------|--------|-------|
-| 20 | **Chatbot artefacts** | "I hope this helps! Let me know if…" | Remove entirely |
-| 21 | **Cutoff disclaimers / speculative gap-filling** | "While details are limited…", "maintains a low profile" | Find sources, say what isn't known, or remove |
-| 22 | **Sycophantic tone** | "Great question! You're absolutely right!" | Respond directly |
+| 20 | **Chatbot text left in the answer** | "I hope this helps! Let me know if…" | Remove entirely |
+| 21 | **Knowledge-limit disclaimers and guesses** | "While details are limited…", "maintains a low profile" | Say what the source doesn't show, or cut it |
+| 22 | **Overly agreeable tone** | "Great question! You're absolutely right!" | Respond directly |
 
 ### Filler and hedging
 
 | # | Pattern | Before | After |
 |---|---------|--------|-------|
 | 23 | **Filler phrases** | "In order to", "Due to the fact that" | "To", "Because" |
-| 24 | **Excessive hedging** | "could potentially possibly" | "may" |
-| 25 | **Generic conclusions** | "The future looks bright" | Specific plans or facts |
+| 24 | **Too many qualifiers** | "could potentially possibly" | "may" |
+| 25 | **Generic positive endings** | "The future looks bright" | End on the last concrete fact |
+| 26 | **Too many hyphenated word pairs** | "the report is high-quality" | "the report is high quality" (keep it before a noun) |
+| 27 | **Pretending to reveal a deeper truth** | "At its core, what really matters is…" | State the point directly |
+| 28 | **Announcing the next point** | "Let's dive in", "Here's what you need to know" | Start with the content |
+| 29 | **A heading repeated in the first sentence** | "## Performance" + "Speed matters." | Let the heading do the work |
+| 30 | **Writing about the previous version** | "This function was added to replace…" | Describe what it does now |
+| 31 | **Forced punchlines and dramatic fragments** | "It had no preference. No prior. No nostalgia." | Use varied sentence lengths and concrete claims |
+| 32 | **Formulaic sayings** | "Symmetry is the language of trust" | Replace the saying with the specific claim |
+| 33 | **Fake-candid openings** | "Honestly? It depends…" | Remove the staged pause |
+| 34 | **Answering objections no one raised** | "I'm not saying documentation doesn't matter, but…" | Cut the unraised objection; keep any real claim |
+| 35 | **Rejecting fake alternatives** | "A tempting approach would be… but that would…" | Drop the fake option; state the real constraint |
 
 ---
 
@@ -248,6 +252,7 @@ The skill also includes a final "obviously AI generated" audit pass and a second
 
 Versions look like `X.Y.Z-uk.N`: the `X.Y.Z` is the upstream `humanizer` version this is built from, and `-uk.N` is the UK revision on top of it.
 
+- **`2.11.2-uk.1`** — tracks upstream **2.11.2**. Upstream's "Rewrite in Plain Language" reworded every pattern into plainer English and restructured the sections; adds two patterns — **#34 answering objections no one raised** and **#35 rejecting fake alternatives** (33 → 35). UK-adapted as usual.
 - **`2.9.1-uk.1`** — tracks upstream **2.9.1**. Adds a "never invent facts" rule (the audit now also checks for fabricated names, numbers, and citations), **Invocation Modes** (pasted text / file / embedded), and a condensed personality section; the internal worked example was dropped upstream and several pattern examples were tightened. Frontmatter moved to the Agent Skills shape (version now under `metadata:`). UK-adapted as usual.
 - **`2.8.2-uk.1`** — tracks upstream **2.8.2**: `compatibility: any-agent`, a new "secondhand text" detection caveat, and a rewritten worked example. UK-adapted as usual.
 - **`2.8.0-uk.1`** — first published UK fork. Tracks upstream **2.8.0** (33 patterns, including the style/cadence patterns #31–33 and the hard "cut em/en dashes" rule). Adds British spellings, the UK outlet swaps, the Step 0 self-update check, and the UK Customisation Manifest.
