@@ -10,7 +10,7 @@ This fork is intended to be a *minimal, well-documented delta* over upstream: th
 
 ## Key files
 
-- `SKILL.md` — the skill, plus two fork-only sections near the top: **"Step 0: Upstream Self-Update Check"** and the **"UK Customisation Manifest."** Source of truth.
+- `SKILL.md` — the skill, plus two fork-only sections near the top: **"Step 0: Update Check"** and the **"UK Customisation Manifest."** Source of truth.
 - `README.md` — for humans: what it does, install, usage, how to update.
 - `AGENTS.md` — this file.
 - `LICENSE` — MIT.
@@ -50,7 +50,7 @@ The frontmatter `version:` is `X.Y.Z-uk.N`; `upstream-version:` is the plain `X.
 
 7. **Commit and push.** Then other machines `git pull`; the Claude app copy gets re-uploaded.
 
-> The skill's built-in "Step 0: Upstream Self-Update Check" performs exactly this flow interactively. Invoking the skill and choosing "update now" is the same thing as steps 1–4; this file just lets you do it deliberately from the repo.
+> The skill's built-in "Step 0: Update Check" only *detects* staleness — it flags when upstream has moved and defers the actual sync to this repo protocol. It deliberately does **not** rewrite the running skill in place (that caused drift and stray edits). So the real update always happens here, in the repo, exactly as above.
 
 ## Editing rules
 

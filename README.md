@@ -4,7 +4,7 @@ Paste in text that sounds like it was written by an AI, and this skill rewrites 
 
 It's a UK-spelling fork of the excellent [`humanizer`](https://github.com/blader/humanizer) skill for Claude. Same job, same 35 patterns, just `colour` instead of `color` (and a couple of examples swapped to UK papers). It tracks upstream closely — see [What's different](#whats-different-from-the-original) and [`AGENTS.md`](AGENTS.md).
 
-Current version: **`2.11.2-uk.1`** (built from upstream `humanizer` 2.11.2).
+Current version: **`2.11.2-uk.2`** (built from upstream `humanizer` 2.11.2).
 
 ---
 
@@ -78,7 +78,7 @@ The original `humanizer` gets better over time. This fork is built to pull those
 
 ### The easy way (let the assistant do it)
 
-Just use the skill and, now and then, ask it to **"check for updates from upstream and update the UK version."** The skill fetches the latest original, compares versions, tells you what changed, re-applies the British spellings and example swaps automatically, and bumps the version. Say yes, then `git push` (below) to publish.
+Just use the skill and, now and then, ask the assistant to **"check for updates from upstream and sync the UK version."** The skill's built-in check tells you when upstream has moved; the assistant then runs the repo sync below (pull upstream → re-apply the UK changes → commit → push) and refreshes your installed copy. The skill flags staleness — it does **not** silently rewrite itself, so updates always go through the repo where you can see the diff.
 
 ### The manual way (pull → convert → push)
 
@@ -126,7 +126,7 @@ This fork is deliberately a thin layer over [`blader/humanizer`](https://github.
 
 - **British spellings** throughout (`humanise`, `colour`, `analyse`, `organisation`, `judgement`, `optimise`, …).
 - **Two examples swapped** to UK outlets — *The Guardian* / *The Times* instead of the US/Indian papers in the notability example and the worked example.
-- A **self-update mechanism** ("Step 0") and the **UK Customisation Manifest** baked into `SKILL.md`, so the fork can re-sync itself when upstream changes.
+- A **staleness check** ("Step 0") and the **UK Customisation Manifest** baked into `SKILL.md` — Step 0 flags when upstream has moved and defers the actual sync to the repo, so the loaded skill never rewrites itself out of step with the source.
 
 Everything else — the patterns, the wording, the structure — tracks upstream.
 
@@ -252,6 +252,7 @@ Upstream 2.11.0 reworded every pattern into plain language; the names below matc
 
 Versions look like `X.Y.Z-uk.N`: the `X.Y.Z` is the upstream `humanizer` version this is built from, and `-uk.N` is the UK revision on top of it.
 
+- **`2.11.2-uk.2`** — fork-only change: reworked **Step 0** from a self-updater into a *staleness check*. It now flags when upstream has moved and defers the actual sync to the repo, instead of rewriting the running skill in place (which had let installed copies drift from the repo). No upstream change.
 - **`2.11.2-uk.1`** — tracks upstream **2.11.2**. Upstream's "Rewrite in Plain Language" reworded every pattern into plainer English and restructured the sections; adds two patterns — **#34 answering objections no one raised** and **#35 rejecting fake alternatives** (33 → 35). UK-adapted as usual.
 - **`2.9.1-uk.1`** — tracks upstream **2.9.1**. Adds a "never invent facts" rule (the audit now also checks for fabricated names, numbers, and citations), **Invocation Modes** (pasted text / file / embedded), and a condensed personality section; the internal worked example was dropped upstream and several pattern examples were tightened. Frontmatter moved to the Agent Skills shape (version now under `metadata:`). UK-adapted as usual.
 - **`2.8.2-uk.1`** — tracks upstream **2.8.2**: `compatibility: any-agent`, a new "secondhand text" detection caveat, and a rewritten worked example. UK-adapted as usual.

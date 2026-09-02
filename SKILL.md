@@ -8,7 +8,7 @@ description: |
   UK English variant: spellings and one example adapted; otherwise tracks upstream.
 license: MIT
 metadata:
-  version: "2.11.2-uk.1"
+  version: "2.11.2-uk.2"
   upstream-version: "2.11.2"
   upstream-repo: https://github.com/blader/humanizer
   upstream-source: https://raw.githubusercontent.com/blader/humanizer/main/SKILL.md
@@ -20,60 +20,47 @@ Rewrite AI-sounding text so it reads like the writer, not a chatbot. Do not chan
 
 The patterns below come from Wikipedia's ["Signs of AI writing"](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing), maintained by WikiProject AI Cleanup.
 
-## Step 0: Upstream Self-Update Check (Run First, Every Invocation)
+## Step 0: Update Check (Run First, Every Invocation)
 
-This skill is a UK-English fork of [blader/humanizer](https://github.com/blader/humanizer). Before doing any humanising work, check whether the upstream `SKILL.md` has changed and offer to pull the update in.
+This skill is a UK-English fork of [blader/humanizer](https://github.com/blader/humanizer), maintained as a git repository — the source of truth is [JeevanDamalcheruvuHO/humaniser-uk](https://github.com/JeevanDamalcheruvuHO/humaniser-uk). **This file is a read-only consumption copy. Never re-apply the manifest by editing this file in place.** Rewriting the loaded skill makes it drift from the repo and leaves stray edits; updates flow *from* the repo, never back into it from here.
 
-**Run this check at the start of every invocation. Do not skip it.** It usually completes in one fetch and one comparison.
+Do a lightweight staleness check at the start of an invocation, then get on with the user's request.
 
 ### Procedure
 
-1. **Locate this file.** Determine the absolute path of the `SKILL.md` you are currently running from (in Claude Code, this is the file containing these instructions). Call it `LOCAL_PATH`.
+1. **Read the local `upstream-version`** from the `metadata:` block of this file's frontmatter (the upstream version this fork was last synced against).
 
-2. **Read the local frontmatter.** Parse the YAML at the top of `LOCAL_PATH` and extract `upstream-version` (the upstream version this fork was last synced against; it lives under the `metadata:` block).
-
-3. **Fetch upstream.** Use `WebFetch` (or `Bash` with `curl -sL`) to retrieve:
+2. **Fetch upstream** with `WebFetch` (or `Bash` `curl -sL`):
 
    ```
    https://raw.githubusercontent.com/blader/humanizer/main/SKILL.md
    ```
 
-   If the fetch fails (network error, 404, timeout), **do not block the user**. Log a one-line note ("Skipped upstream check: <reason>") and proceed straight to the user's actual request. Never abort a humanising task because the update check failed.
+   If the fetch fails (network error, 404, timeout), log a one-line note ("Skipped upstream check: <reason>") and continue. Never block the user's task on this.
 
-4. **Parse the upstream version** from its frontmatter. As of upstream 2.8.3 this is `metadata.version` (older upstreams used a top-level `version:` field — accept either).
+3. **Parse the upstream version** from its frontmatter (`metadata.version`; older upstreams used a top-level `version:` — accept either).
 
-5. **Compare versions.** Use simple string equality on the version field.
-   - If `upstream.version == local.upstream-version`: nothing to do. Continue silently to the user's task.
-   - If they differ: continue to step 6.
+4. **Compare** (string equality):
+   - **Equal** → the fork is current. Continue silently to the user's task.
+   - **Upstream is newer** → the fork needs a sync. This is a maintenance job, not something to do silently in the middle of a humanising request. Tell the user once, in one line — e.g. "Heads-up: upstream humanizer is now `<Y>`; this fork tracks `<X>`. Ask me to sync it when you like." — then carry on with what they actually asked for. Do **not** rewrite this file.
 
-6. **Show the user what changed.** Produce a short summary:
-   - Local upstream-version: `<X>`
-   - New upstream version: `<Y>`
-   - Brief diff: which sections gained, lost, or changed content. Use `Bash` with `diff` against a temp file if helpful, but keep the summary to roughly 5–10 bullet points — do not dump the full diff into chat.
+5. **When the user asks to sync**, run the repo protocol in [`AGENTS.md`](AGENTS.md) — never an in-place edit of the running skill:
+   1. In the source-of-truth repo clone: `git fetch upstream`, re-apply the **UK Customisation Manifest** over the fresh upstream content, bump `metadata.version` / `upstream-version`, update the README, then `commit` and `push`.
+   2. Refresh the consumption copies so the running skill picks it up: in the installed skill directory (`~/.claude/skills/humaniser` for Claude Code) run `git fetch origin && git reset --hard origin/main`; copy the repo's `SKILL.md` over any agent-mode plugin copy.
 
-7. **Ask whether to update.** Use `AskUserQuestion` with three options:
-   - **Update now** — apply the new upstream content with UK adaptations re-applied (step 8).
-   - **Skip this time** — leave the file alone, proceed with current version.
-   - **Show full diff first** — print the diff, then re-ask.
+### If this copy is only behind the repo
 
-8. **If the user chooses Update now:**
-   1. Start from the freshly fetched upstream content.
-   2. Re-apply every transformation in the **UK Customisation Manifest** below.
-   3. Update the frontmatter: set `metadata.upstream-version` to the new upstream version, and bump `metadata.version`'s local suffix (`2.11.2-uk.1` → `2.11.3-uk.1`, or `2.11.2-uk.1` → `2.11.2-uk.2` if only the manifest had to change).
-   4. Write the result back to `LOCAL_PATH` using `Write`.
-   5. Confirm to the user in one line: "Updated humaniser skill: upstream <X> → <Y>, UK adaptations re-applied."
-
-9. **Then proceed with the user's actual humanising request** using the now-current skill content.
+If upstream matches the fork's `upstream-version` but this file is older than the published fork (a new `-uk.N` was released), the copy is merely stale — refresh it, don't re-convert: from this skill's directory, `git fetch origin && git reset --hard origin/main`.
 
 ### When to skip the check
 
-- The user explicitly says "skip the update check" or "don't check upstream" in their request.
-- The fetch fails (see step 3).
-- You have already completed the check earlier in the same session — do not re-fetch on every message, only on the first invocation per session.
+- The user says "skip the update check" or "don't check upstream".
+- The fetch fails (see step 2).
+- You already checked earlier this session — check once per session, not per message.
 
 ### When the user is mid-task
 
-If the user is in the middle of a multi-step humanising job (e.g. iterating on a draft), defer the update prompt until they reach a natural stopping point. Don't interrupt a working flow with a maintenance question.
+If the user is mid-flow on a humanising job, hold the heads-up until a natural stopping point. Don't interrupt with a maintenance note.
 
 ---
 
@@ -157,7 +144,7 @@ Leave other geographic/cultural examples (Catalonia, Texas temple, Ethiopia, Che
 
 ### F. Preserve this self-update section
 
-The "Step 0: Upstream Self-Update Check" section and the "UK Customisation Manifest" itself are local additions and must be retained on every update.
+The "Step 0: Update Check" section and the "UK Customisation Manifest" itself are local additions and must be retained on every update.
 
 ### G. Leave upstream's own em dashes alone
 
