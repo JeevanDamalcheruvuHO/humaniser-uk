@@ -5,10 +5,10 @@ description: |
   Use when editing or reviewing prose for inflated claims,
   sales language, vague sources, repetitive structure, stock AI words, passive
   voice, filler, or chatbot artefacts. Based on Wikipedia's "Signs of AI writing."
-  UK English variant: spellings and one example adapted; otherwise tracks upstream.
+  UK English variant: British spellings, one example adapted, and a few extra §7 AI-vocabulary words; otherwise tracks upstream.
 license: MIT
 metadata:
-  version: "2.11.2-uk.2"
+  version: "2.11.2-uk.3"
   upstream-version: "2.11.2"
   upstream-repo: https://github.com/blader/humanizer
   upstream-source: https://raw.githubusercontent.com/blader/humanizer/main/SKILL.md
@@ -150,6 +150,14 @@ The "Step 0: Update Check" section and the "UK Customisation Manifest" itself ar
 
 Upstream's explanatory prose may use an em dash in its own sentences. Section 14's "no em dashes" rule is guidance for *humanised output*, not for this skill file — keep upstream's own punctuation verbatim rather than rewriting it.
 
+### H. Fork addition — extra §7 AI-vocabulary words
+
+Unlike A–G (which only re-shape upstream), this is the fork's one deliberate **content** addition. After re-applying upstream's §7 "High-frequency AI words" line, append a separate **"Also (UK fork additions):"** line with these extra high-frequency AI words, each with its carve-out:
+
+> seamless; harness (verb); streamline; empower; holistic; utilise/utilize (where "use" would do; keep the metric noun *utilisation*); robust (figurative; preserve technical uses such as robust statistics or robust error handling); navigate (figurative "navigating the complexities of…", not literal "navigate to the page"); unlock (figurative "unlock your potential/insights", not "unlock a feature/account"); elevate (figurative "elevate your brand/writing", not literal/medical "elevated").
+
+These are proposed upstream in [blader/humanizer#241](https://github.com/blader/humanizer/issues/241) but not merged (the maintainer curates §7 one word at a time to avoid bloat). Keep them as a **separate, labelled line** so upstream's own list stays a clean diff. If upstream later merges any of these into §7, drop it from this fork line to avoid duplication.
+
 ---
 
 ## What to do
@@ -248,6 +256,7 @@ Add details such as dates or public actions only when they come from the source 
 ### 7. Overused AI words
 
 **High-frequency AI words:** Actually, additionally, align with, crucial, delve, emphasising, enduring, enhance, fostering, garner, gate/gated/gating (figurative; preserve established technical usage), highlight (verb), interplay, intricate/intricacies, key (adjective), landscape (abstract noun), pivotal, quietly, showcase, tapestry (abstract noun), testament, underscore (verb), valuable, vibrant
+**Also (UK fork additions):** seamless, harness (verb: "harness the power of…"), streamline, empower, holistic, utilise/utilize (where "use" would do; keep the metric noun *utilisation*), robust (figurative; preserve technical uses such as robust statistics or robust error handling), navigate (figurative: "navigating the complexities of…"; not literal "navigate to the page"), unlock (figurative: "unlock your potential/insights"; not "unlock a feature/account"), elevate (figurative: "elevate your brand/writing"; not literal/medical "elevated")
 **Problem:** AI writing uses these words much more often than most people do, especially in groups.
 **Before:**
 > Additionally, a distinctive feature of Somali cuisine is the incorporation of camel meat. An enduring testament to Italian colonial influence is the widespread adoption of pasta in the local culinary landscape, showcasing how these dishes have integrated into the traditional diet.
