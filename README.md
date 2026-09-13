@@ -2,9 +2,9 @@
 
 Paste in text that sounds like it was written by an AI, and this skill rewrites it so it reads like a real person wrote it — in **British English**.
 
-It's a UK-spelling fork of the excellent [`humanizer`](https://github.com/blader/humanizer) skill for Claude. Same job, same 35 patterns, just `colour` instead of `color` (and a couple of examples swapped to UK papers). It tracks upstream closely — see [What's different](#whats-different-from-the-original) and [`AGENTS.md`](AGENTS.md).
+It's a UK-spelling fork of the excellent [`humanizer`](https://github.com/blader/humanizer) skill for Claude. Same job, same 25 patterns, just `colour` instead of `color` (and one example swapped to UK papers). It tracks upstream closely — see [What's different](#whats-different-from-the-original) and [`AGENTS.md`](AGENTS.md).
 
-Current version: **`2.11.2-uk.3`** (built from upstream `humanizer` 2.11.2).
+Current version: **`3.0.0-uk.1`** (built from upstream `humanizer` 3.0.0).
 
 ---
 
@@ -125,9 +125,9 @@ git push
 This fork is deliberately a thin layer over [`blader/humanizer`](https://github.com/blader/humanizer). The only intended differences:
 
 - **British spellings** throughout (`humanise`, `colour`, `analyse`, `organisation`, `judgement`, `optimise`, …).
-- **Two examples swapped** to UK outlets — *The Guardian* / *The Times* instead of the US/Indian papers in the notability example and the worked example.
+- **One example swapped** to UK outlets — *The Times* / *The Guardian* instead of the US/Indian papers in the "Borrowed authority" example.
 - A **staleness check** ("Step 0") and the **UK Customisation Manifest** baked into `SKILL.md` — Step 0 flags when upstream has moved and defers the actual sync to the repo, so the loaded skill never rewrites itself out of step with the source.
-- A few **extra §7 AI-vocabulary words** (seamless, harness, streamline, empower, holistic, utilise, robust, navigate, unlock, elevate — with figurative/technical carve-outs). These are proposed upstream in [blader/humanizer#241](https://github.com/blader/humanizer/issues/241) but not yet merged, so the fork carries them on a separate, clearly-labelled line and will drop any that upstream later adopts.
+- A few **extra AI-vocabulary words** in the "Overused AI words" pattern (seamless, harness, streamline, empower, holistic, utilise, navigate, unlock, elevate — with figurative/technical carve-outs). These are proposed upstream in [blader/humanizer#241](https://github.com/blader/humanizer/issues/241), carried on a separate, clearly-labelled line, and the fork drops any that upstream adopts — as it did with `robust`, which upstream added in 3.0.0.
 
 Everything else — the patterns, the wording, the structure — tracks upstream.
 
@@ -143,69 +143,59 @@ The skill also includes a final "obviously AI generated" audit pass and a second
 
 ---
 
-## 35 patterns detected (with before/after examples)
+## 25 patterns detected (with before/after examples)
 
-Upstream 2.11.0 reworded every pattern into plain language; the names below match the current `SKILL.md`.
+Upstream 3.0.0 rebuilt the skill around **25 patterns ordered strongest-first** in five groups. §1–§5 justify an edit on a single sighting; patterns marked *weak alone* need company from other tells before you act. The names below match the current `SKILL.md`.
 
-### Content patterns
-
-| # | Pattern | Before | After |
-|---|---------|--------|-------|
-| 1 | **Inflated claims about importance and legacy** | "marking a pivotal moment in the evolution of…" | "was established in 1989, part of a wider decentralisation" |
-| 2 | **Name-dropping to prove importance** | "cited in The Times, BBC, FT, and The Guardian" | Keep only what's sourced: "cited in The Times and the BBC" |
-| 3 | **Shallow analysis with -ing phrases** | "symbolising… reflecting… showcasing…" | State the fact plainly, drop the -ing padding |
-| 4 | **Sales language** | "nestled within the breathtaking region" | "is a town in the Gonder region" |
-| 5 | **Vague sources** | "Experts believe it plays a crucial role" | Name a real source, or cut the claim |
-| 6 | **Formulaic challenges and outlook sections** | "Despite challenges… continues to thrive" | State the actual facts (from the source) |
-
-### Language and grammar patterns
+### A. Staging instead of stating (act on one sighting)
 
 | # | Pattern | Before | After |
 |---|---------|--------|-------|
-| 7 | **Overused AI words** | "Actually… additionally… testament… landscape… showcasing" | "also… remain common" |
-| 8 | **Avoiding is and are** | "serves as… features… boasts" | "is… has" |
-| 9 | **Not X but Y and clipped negative endings** | "It's not just X, it's Y", "…, no guessing" | State the point directly |
-| 10 | **Forced groups of three** | "innovation, inspiration, and insights" | Use the natural number of items |
-| 11 | **Changing names and repeating sentence openings** | "protagonist… main character… hero"; "She… She… She…" | One clear name; vary or merge the openings |
-| 12 | **False from X to Y ranges** | "from the Big Bang to dark matter" | List the topics directly |
-| 13 | **Passive voice and missing subjects** | "No configuration file needed" | Name the actor when it helps clarity |
+| 1 | **Not X but Y** | "It's not merely a song, it's a statement" | State the point directly |
+| 2 | **One-line closers and dramatic fragments** | "No aesthetic prior. No nostalgia." / repeated "That is the real win." | Merge into a sentence with a real claim; cut the repeat |
+| 3 | **Sayings that sound deep** | "At its core, what really matters is…" / "Symmetry is the language of trust" | Replace the saying with the specific claim |
+| 4 | **Staged run-up before the point** | "Let's dive in", "Honestly?" | Start with the content |
+| 5 | **Arguing with no one** | "I'm not saying documentation doesn't matter, but…" / "A tempting approach would be…" | Cut the unraised objection or fake option |
 
-### Style patterns
+### B. Rhythm by rule
 
 | # | Pattern | Before | After |
 |---|---------|--------|-------|
-| 14 | **Em and en dashes** | "institutions—not the people—yet this continues—" | Cut them: full stops, commas, colons, or parentheses |
-| 15 | **Too much bold text** | "**OKRs**, **KPIs**, **BMC**" | "OKRs, KPIs, BMC" |
-| 16 | **Lists with bold mini-headings** | "**Performance:** Performance improved" | Convert to prose |
-| 17 | **Title case in headings** | "Strategic Negotiations And Partnerships" | "Strategic negotiations and partnerships" |
-| 18 | **Emojis** | "🚀 Launch Phase: 💡 Key Insight:" | Remove emojis |
-| 19 | **Curly quotation marks** | `said “the project”` | `said "the project"` |
+| 6 | **Forced triads** | "innovation, inspiration, and insights" | Keep three only when the meaning has three parts |
+| 7 | **Repeated sentence openings** | "She… She… She…" | Merge, change subject, or begin with the action |
+| 8 | **Dashes as the universal connector** | "institutions—not the people—yet this continues—" | Full stops, commas, colons, or parentheses |
+| 9 | **Stacked qualifiers** *(weak alone)* | "could potentially possibly… might…" | Keep only qualifiers the source supports |
+| 10 | **Hyphenated pairs everywhere** *(weak alone)* | "the report is high-quality" | "the report is high quality" (keep it before a noun) |
+| 11 | **Passive voice and missing subjects** *(weak alone)* | "No configuration file needed" | Name the actor when it helps clarity |
 
-### Chatbot patterns
-
-| # | Pattern | Before | After |
-|---|---------|--------|-------|
-| 20 | **Chatbot text left in the answer** | "I hope this helps! Let me know if…" | Remove entirely |
-| 21 | **Knowledge-limit disclaimers and guesses** | "While details are limited…", "maintains a low profile" | Say what the source doesn't show, or cut it |
-| 22 | **Overly agreeable tone** | "Great question! You're absolutely right!" | Respond directly |
-
-### Filler and hedging
+### C. Inflation and borrowed authority
 
 | # | Pattern | Before | After |
 |---|---------|--------|-------|
-| 23 | **Filler phrases** | "In order to", "Due to the fact that" | "To", "Because" |
-| 24 | **Too many qualifiers** | "could potentially possibly" | "may" |
-| 25 | **Generic positive endings** | "The future looks bright" | End on the last concrete fact |
-| 26 | **Too many hyphenated word pairs** | "the report is high-quality" | "the report is high quality" (keep it before a noun) |
-| 27 | **Pretending to reveal a deeper truth** | "At its core, what really matters is…" | State the point directly |
-| 28 | **Announcing the next point** | "Let's dive in", "Here's what you need to know" | Start with the content |
-| 29 | **A heading repeated in the first sentence** | "## Performance" + "Speed matters." | Let the heading do the work |
-| 30 | **Writing about the previous version** | "This function was added to replace…" | Describe what it does now |
-| 31 | **Forced punchlines and dramatic fragments** | "It had no preference. No prior. No nostalgia." | Use varied sentence lengths and concrete claims |
-| 32 | **Formulaic sayings** | "Symmetry is the language of trust" | Replace the saying with the specific claim |
-| 33 | **Fake-candid openings** | "Honestly? It depends…" | Remove the staged pause |
-| 34 | **Answering objections no one raised** | "I'm not saying documentation doesn't matter, but…" | Cut the unraised objection; keep any real claim |
-| 35 | **Rejecting fake alternatives** | "A tempting approach would be… but that would…" | Drop the fake option; state the real constraint |
+| 12 | **Overused AI words** (+ [UK fork additions](#whats-different-from-the-original)) | "Actually… enduring testament… landscape, showcasing" | "also… remain common" |
+| 13 | **Inflated significance** | "marking a pivotal moment…" / "Despite these challenges… continues to thrive" / "the future looks bright" | Keep the fact, drop the significance; end on the last concrete fact |
+| 14 | **Vague connection or association** | "He is associated with the Rajhans Orchestra" | Name the real relationship ("He founded and conducts…") |
+| 15 | **Shallow -ing riders** | "symbolising… reflecting…" | Keep the fact, drop the -ing padding |
+| 16 | **Sales language** | "nestled within the breathtaking region" | "is a town in the Gonder region" |
+| 17 | **Borrowed authority** | "Experts believe…" / "cited in The Times, BBC, FT, and The Guardian" | Name the real source, or cut the claim/list |
+| 18 | **Avoiding is, are, and has** | "serves as… features… boasts" | "is… has" |
+
+### D. Formatting by rule
+
+| # | Pattern | Before | After |
+|---|---------|--------|-------|
+| 19 | **Bold as decoration** | "**Performance:** Performance improved" | Remove the bold; turn labelled lists into prose |
+| 20 | **Decorative headings** | "Strategic Negotiations And Partnerships", 🚀 emojis, → arrows, rules | Sentence case, no decoration |
+| 21 | **Curly quotation marks** *(weak alone)* | `said “the project”` | `said "the project"` |
+
+### E. Leftovers from the chat and the draft (remove outright)
+
+| # | Pattern | Before | After |
+|---|---------|--------|-------|
+| 22 | **Chatbot residue** | "Great question!… I hope this helps!" | Remove the wrapper, keep the content |
+| 23 | **Knowledge-limit disclaimers and guesses** | "While details are limited…", "maintains a low profile" | Say what the source doesn't show, or cut it |
+| 24 | **A heading repeated in the first sentence** | "## Performance" + "Speed matters." | Let the heading do the work |
+| 25 | **Writing about the previous version** | "This function was added to replace…" | Describe what it does now |
 
 ---
 
@@ -253,6 +243,7 @@ Upstream 2.11.0 reworded every pattern into plain language; the names below matc
 
 Versions look like `X.Y.Z-uk.N`: the `X.Y.Z` is the upstream `humanizer` version this is built from, and `-uk.N` is the UK revision on top of it.
 
+- **`3.0.0-uk.1`** — tracks upstream **3.0.0**, a major rebuild: the skill was reorganised into **25 patterns ordered strongest-first** in five groups (A Staging, B Rhythm, C Inflation, D Formatting, E Leftovers), realigned with the current Wikipedia article, and reworded throughout. Two patterns are new relative to the old set (vague connection/association; forced triads at paragraph scale). Upstream also adopted **`robust`** into its own AI-words list, so it was dropped from the fork line (nine fork words remain). UK-adapted as usual.
 - **`2.11.2-uk.3`** — fork-only change: added ten extra §7 AI-vocabulary words (seamless, harness, streamline, empower, holistic, utilise, robust, navigate, unlock, elevate) on a separate labelled line, with figurative/technical carve-outs. Mirrors upstream issue [#241](https://github.com/blader/humanizer/issues/241) (open, unmerged); the fork carries them until/unless upstream adopts them. First deliberate content divergence from upstream. No upstream change.
 - **`2.11.2-uk.2`** — fork-only change: reworked **Step 0** from a self-updater into a *staleness check*. It now flags when upstream has moved and defers the actual sync to the repo, instead of rewriting the running skill in place (which had let installed copies drift from the repo). No upstream change.
 - **`2.11.2-uk.1`** — tracks upstream **2.11.2**. Upstream's "Rewrite in Plain Language" reworded every pattern into plainer English and restructured the sections; adds two patterns — **#34 answering objections no one raised** and **#35 rejecting fake alternatives** (33 → 35). UK-adapted as usual.
