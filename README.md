@@ -2,9 +2,9 @@
 
 Paste in text that sounds like it was written by an AI, and this skill rewrites it so it reads like a real person wrote it — in **British English**.
 
-It's a UK-spelling fork of the excellent [`humanizer`](https://github.com/blader/humanizer) skill for Claude. Same job, same 25 patterns, just `colour` instead of `color` (and one example swapped to UK papers). It tracks upstream closely — see [What's different](#whats-different-from-the-original) and [`AGENTS.md`](AGENTS.md).
+It's a UK-spelling fork of the excellent [`humanizer`](https://github.com/blader/humanizer) skill for Claude. Same job, same 26 patterns, just `colour` instead of `color` (and one example swapped to UK papers). It tracks upstream closely — see [What's different](#whats-different-from-the-original) and [`AGENTS.md`](AGENTS.md).
 
-Current version: **`3.0.0-uk.1`** (built from upstream `humanizer` 3.0.0).
+Current version: **`3.1.0-uk.1`** (built from upstream `humanizer` 3.1.0).
 
 ---
 
@@ -143,9 +143,9 @@ The skill also includes a final "obviously AI generated" audit pass and a second
 
 ---
 
-## 25 patterns detected (with before/after examples)
+## 26 patterns detected (with before/after examples)
 
-Upstream 3.0.0 rebuilt the skill around **25 patterns ordered strongest-first** in five groups. §1–§5 justify an edit on a single sighting; patterns marked *weak alone* need company from other tells before you act. The names below match the current `SKILL.md`.
+Upstream 3.0.0 rebuilt the skill around patterns **ordered strongest-first** in groups; 3.1.0 added group **F** (writing for the wrong reader), bringing it to **26**. §1–§5 justify an edit on a single sighting; patterns marked *weak alone* need company from other tells before you act. The names below match the current `SKILL.md`.
 
 ### A. Staging instead of stating (act on one sighting)
 
@@ -195,7 +195,13 @@ Upstream 3.0.0 rebuilt the skill around **25 patterns ordered strongest-first** 
 | 22 | **Chatbot residue** | "Great question!… I hope this helps!" | Remove the wrapper, keep the content |
 | 23 | **Knowledge-limit disclaimers and guesses** | "While details are limited…", "maintains a low profile" | Say what the source doesn't show, or cut it |
 | 24 | **A heading repeated in the first sentence** | "## Performance" + "Speed matters." | Let the heading do the work |
-| 25 | **Writing about the previous version** | "This function was added to replace…" | Describe what it does now |
+| 25 | **Writing about the document instead of its subject** | "This function was added to replace…" / "compiled from… flagged rather than guessed" | Describe the subject, not the doc; keep a real source credit |
+
+### F. Writing for the wrong reader
+
+| # | Pattern | Before | After |
+|---|---------|--------|-------|
+| 26 | **Re-explaining what the reader knows** | a reply that restates the problem, walks the diagnosis, and reaches the decision last | Lead with the decision; keep only reasoning that changes the reader's mind |
 
 ---
 
@@ -243,6 +249,7 @@ Upstream 3.0.0 rebuilt the skill around **25 patterns ordered strongest-first** 
 
 Versions look like `X.Y.Z-uk.N`: the `X.Y.Z` is the upstream `humanizer` version this is built from, and `-uk.N` is the UK revision on top of it.
 
+- **`3.1.0-uk.1`** — tracks upstream **3.1.0**. Adds group **F, "Writing for the wrong reader"** (§26, re-explaining what the reader already knows), a renamed and expanded §25 ("Writing about the document instead of its subject"), and various watch-list tidy-ups (§12 drops `emphasising`/`fostering`, now covered by §15; §16 drops words covered elsewhere). 25 → 26 patterns. UK-adapted as usual.
 - **`3.0.0-uk.1`** — tracks upstream **3.0.0**, a major rebuild: the skill was reorganised into **25 patterns ordered strongest-first** in five groups (A Staging, B Rhythm, C Inflation, D Formatting, E Leftovers), realigned with the current Wikipedia article, and reworded throughout. Two patterns are new relative to the old set (vague connection/association; forced triads at paragraph scale). Upstream also adopted **`robust`** into its own AI-words list, so it was dropped from the fork line (nine fork words remain). UK-adapted as usual.
 - **`2.11.2-uk.3`** — fork-only change: added ten extra §7 AI-vocabulary words (seamless, harness, streamline, empower, holistic, utilise, robust, navigate, unlock, elevate) on a separate labelled line, with figurative/technical carve-outs. Mirrors upstream issue [#241](https://github.com/blader/humanizer/issues/241) (open, unmerged); the fork carries them until/unless upstream adopts them. First deliberate content divergence from upstream. No upstream change.
 - **`2.11.2-uk.2`** — fork-only change: reworked **Step 0** from a self-updater into a *staleness check*. It now flags when upstream has moved and defers the actual sync to the repo, instead of rewriting the running skill in place (which had let installed copies drift from the repo). No upstream change.
