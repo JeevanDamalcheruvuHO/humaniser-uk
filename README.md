@@ -38,11 +38,14 @@ cd ~/.claude/skills/humaniser && git pull
 
 ### On the Claude app (web, desktop, phone)
 
-Skills you add to your account follow you to every device you sign in on — you only do this once:
+**Recommended: install it as a plugin, so it stays current.** This repo is a Claude plugin marketplace. Installing from it means your account pulls the skill straight from GitHub, so a new release here is picked up by refreshing the plugin rather than re-uploading anything.
 
-1. Download this repo: green **Code** button on GitHub → **Download ZIP**, then unzip.
-2. In the Claude app, open **Settings → Capabilities** (it may say **Skills**) and **add a skill**, pointing it at the unzipped folder (the one with `SKILL.md` inside).
-3. Done — it's now on web, desktop, and mobile. Re-add it after an update to refresh.
+- **Claude app:** open the plugins area (Customise → Plugins, or Settings → Capabilities depending on your version), choose **add a marketplace**, and enter `JeevanDamalcheruvuHO/humaniser-uk`. Then install **humaniser** from it. When a new version is released, update the plugin from the same place.
+- **Claude Code:** run `/plugin marketplace add JeevanDamalcheruvuHO/humaniser-uk`, then `/plugin install humaniser@humaniser-uk`. To pick up releases, run `/plugin marketplace update humaniser-uk`, or turn on auto-update for this marketplace in `/plugin`.
+
+Use one install route per surface. If you already copied the skill into `~/.claude/skills/humaniser` (see above), don't also install the plugin in Claude Code, or you'll have two copies of the same skill.
+
+**Fallback: upload it once by hand.** Download this repo (green **Code** button → **Download ZIP**), then in **Settings → Capabilities** (it may say **Skills**) add a skill pointing at the folder with `SKILL.md` inside. This copy does not update itself; re-upload it after each release.
 
 ---
 

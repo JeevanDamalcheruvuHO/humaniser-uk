@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "humaniser",
+  "description": "UK English fork of humanizer: rewrite AI-sounding text so it reads like the writer without changing what it says.",
+  "version": "3.1.0-uk.1",
+  "author": {
+    "name": "Jeevan",
+    "url": "https://github.com/JeevanDamalcheruvuHO"
+  },
+  "homepage": "https://github.com/JeevanDamalcheruvuHO/humaniser-uk",
+  "repository": "https://github.com/JeevanDamalcheruvuHO/humaniser-uk",
+  "license": "MIT",
+  "keywords": ["writing", "editing", "humanise", "prose", "style", "uk-english"],
+  "skills": ["./"]
+}

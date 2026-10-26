@@ -44,6 +44,8 @@ The frontmatter `version:` is `X.Y.Z-uk.N`; `upstream-version:` is the plain `X.
 
 4. **Bump the version.** Set `upstream-version:` to the new upstream `X.Y.Z` and `version:` to `X.Y.Z-uk.1` (use `-uk.N+1` if only the manifest changed without an upstream bump).
 
+   **Also bump `.claude-plugin/plugin.json` `"version"` to the same `X.Y.Z-uk.N`.** Plugin installs only treat the skill as updated when this field changes, so skipping it leaves every plugin install on the old version even after you push.
+
 5. **Sanity-check the diff.** Spelling subs are mechanical, but larger upstream rewrites (new pattern sections, restructures) deserve a read. Confirm no US spellings leaked into the body and no UK changes leaked into excluded content.
 
 6. **Update `README.md`** if the user-facing summary or version number should change.
