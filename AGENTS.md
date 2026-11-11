@@ -6,13 +6,13 @@ Guidance for an AI assistant (Claude Code, Codex, etc.) working in this repo. Th
 
 A UK-English fork of [`blader/humanizer`](https://github.com/blader/humanizer), an agent skill implemented entirely as Markdown. The runtime artifact is `SKILL.md` (YAML frontmatter + the editor prompt). There is no build step and no code to run. **`SKILL.md` is the source of truth for the skill.**
 
-This fork is intended to be a *minimal, well-documented delta* over upstream: the same skill, with British spellings, one example's outlets swapped, a short update check, a few extra AI-vocabulary words, and a line on invisible characters. Every intended difference is listed in the **UK Customisation Manifest** below (sections A–I). Do not introduce UK-specific changes that aren't captured there — add them to the manifest first.
+This fork is intended to be a *minimal, well-documented delta* over upstream: the same skill, with British spellings, one example's outlets swapped, a few extra AI-vocabulary words, and a line on invisible characters. Every intended difference is listed in the **UK Customisation Manifest** below (sections A–I). Do not introduce UK-specific changes that aren't captured there — add them to the manifest first.
 
 The manifest lives here rather than in `SKILL.md` because every word of `SKILL.md` is read on each use of the skill. Maintenance instructions do not belong in the prompt.
 
 ## Key files
 
-- `SKILL.md` — the skill, plus one short fork-only section near the top, **"Step 0: Update check"**. Source of truth.
+- `SKILL.md` — the skill. Source of truth. It contains no update check and fetches nothing.
 - `AGENTS.md` — this file: the sync recipe and the manifest.
 - `README.md` — for humans: what it does, install, usage, how to update.
 - `.claude-plugin/plugin.json` — the Claude plugin manifest. Its `"version"` must match `SKILL.md`.
@@ -22,6 +22,7 @@ The manifest lives here rather than in `SKILL.md` because every word of `SKILL.m
 - `agents/openai.yaml` — display name, short description and default prompt for OpenAI-compatible agents such as Codex.
 - `scripts/sync-upstream.py` — applies the manifest to upstream's `SKILL.md` mechanically. `--check` verifies that the current `SKILL.md` is exactly upstream plus the manifest. Standard library only.
 - `scripts/check-fork.py` — checks the fork after a sync: versions agree, no US spellings or US dates leaked, README pattern names match, and `SKILL.md` has not grown past upstream. Standard library only.
+- `.github/workflows/upstream-watch.yml` — runs every Monday and fails when upstream has a version this fork does not track, so GitHub emails the maintainer. This is how the fork learns that upstream moved.
 - `.github/workflows/check.yml` — runs `scripts/check-fork.py` on GitHub for every push to `main` and every pull request.
 - `LICENSE` — MIT.
 
@@ -47,7 +48,7 @@ The manifest lives here rather than in `SKILL.md` because every word of `SKILL.m
    ```
    python3 scripts/sync-upstream.py
    ```
-   It fetches upstream, rebuilds `SKILL.md` from the *fresh upstream content* with manifest sections A–H applied, carries Step 0 and the extra AI-words line over from the current `SKILL.md`, and sets the versions in `SKILL.md` and `plugin.json` (so step 4 is done for you). Each `REVIEW:` line it prints is a manifest item it could not apply, usually because upstream reworded the passage or adopted a fork word. Resolve each one by hand, following the manifest below, and update the script so the next sync handles it. If the script cannot run, apply sections A–H by hand.
+   It fetches upstream, rebuilds `SKILL.md` from the *fresh upstream content* with manifest sections A–H applied, carries the "Also (UK fork additions)" lines over from the current `SKILL.md`, and sets the versions in `SKILL.md` and `plugin.json` (so step 4 is done for you). Each `REVIEW:` line it prints is a manifest item it could not apply, usually because upstream reworded the passage or adopted a fork word. Resolve each one by hand, following the manifest below, and update the script so the next sync handles it. If the script cannot run, apply sections A–H by hand.
 
 4. **Bump the version.** Set `metadata.upstream-version` to the new upstream `X.Y.Z` and `metadata.version` to `X.Y.Z-uk.1` (use `-uk.N+1` if only fork content changed without an upstream bump).
 
@@ -59,7 +60,7 @@ The manifest lives here rather than in `SKILL.md` because every word of `SKILL.m
 
 7. **Commit and push.** Then refresh the installed copies: `git pull` in each cloned skill directory (`~/.claude/skills/humaniser` for Claude Code), re-run `npx skills add JeevanDamalcheruvuHO/humaniser-uk --global --agent <name>` for each copy the Skills CLI installed (those are plain copies, not clones), and update the plugin wherever it was installed from the marketplace. A copy uploaded to the Claude app by hand must be re-uploaded.
 
-> The skill's built-in "Step 0: Update check" only *detects* staleness — it flags when upstream has moved and defers the actual sync to this repo protocol. It deliberately does **not** rewrite the running skill in place (that caused drift and stray edits). So the real update always happens here, in the repo, exactly as above.
+> The skill does not check for updates itself. Until `4.0.0-uk.5` it had a "Step 0" that fetched upstream's `SKILL.md` in every session; a security scanner (Snyk, rule W011) flagged that as third-party content pulled into the agent's context, so the check moved to the weekly "Upstream watch" workflow. The real update always happens here, in the repo, exactly as above.
 
 ## UK Customisation Manifest
 
@@ -76,7 +77,7 @@ Upstream uses the Agent Skills frontmatter shape: `name`, `description`, `licens
   - `upstream-version: "X.Y.Z"` — the upstream version this fork was synced against
   - `upstream-repo: https://github.com/blader/humanizer`
   - `upstream-source: https://raw.githubusercontent.com/blader/humanizer/main/SKILL.md`
-- Do **not** re-add `allowed-tools` or `compatibility`. Upstream dropped them for cross-agent portability, and Step 0's fetch needs no whitelist.
+- Do **not** re-add `allowed-tools` or `compatibility`. Upstream dropped them for cross-agent portability.
 
 ### B. Spelling substitutions (global, case-preserving)
 
@@ -144,9 +145,9 @@ Leave genuine Wikipedia-style geographic/cultural examples (Catalonia, Korattur 
 
 - `# Humanizer: remove AI writing patterns` → `# Humaniser: remove AI writing patterns` (match upstream's current casing; earlier upstreams used Title Case, so adjust to whatever upstream currently ships).
 
-### F. Preserve the Step 0 section
+### F. No update check in the skill
 
-"Step 0: Update check" is a fork addition. Copy it from the current fork `SKILL.md` and place it after the intro line, before "Why AI text sounds the way it does". Keep it short: it is read on every use. Do not move the manifest back into `SKILL.md`.
+Do not add a section that makes the skill fetch anything, including upstream's `SKILL.md`. Fetched text lands in the agent's context, which is a prompt-injection route, and upstream's own skill fetches nothing. New upstream releases are noticed by `.github/workflows/upstream-watch.yml`. Do not move the manifest into `SKILL.md` either.
 
 ### G. Leave upstream's own em dashes alone
 
@@ -173,6 +174,6 @@ Upstream ships manifests so several agents can install the skill. The fork keeps
 - Preserve valid YAML frontmatter (formatting and indentation).
 - The prompt below the frontmatter is the product — edit it like a careful instruction document, not code.
 - Keep `SKILL.md` close to upstream's size. Upstream caps its own at 5,500 words; anything about maintaining the fork goes in this file.
-- The manifest is the specification and `scripts/sync-upstream.py` is its mechanical form. Change them together: a UK change made only in `SKILL.md` is lost at the next sync, and `check-fork.py` will fail until the script reproduces it. Step 0 and the extra AI-words line are the exception; edit those in `SKILL.md` and the script carries them over.
+- The manifest is the specification and `scripts/sync-upstream.py` is its mechanical form. Change them together: a UK change made only in `SKILL.md` is lost at the next sync, and `check-fork.py` will fail until the script reproduces it. The "Also (UK fork additions)" lines are the exception; edit those in `SKILL.md` and the script carries them over.
 - Keep the fork a thin layer over upstream. If you find yourself wanting to change wording beyond the manifest, reconsider — or capture it as a new manifest item so the next sync re-applies it.
 - **Never `git merge upstream/main` into `main`.** This is a manual re-apply fork, not a merge fork: upstream and this fork diverge by design (spelling + the fork-only section), so a merge would produce conflicts and US spellings. The `upstream` remote is for fetching and diffing only.

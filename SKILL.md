@@ -8,7 +8,7 @@ description: |
   UK English variant: British spellings, one example adapted, and a few extra AI-vocabulary words; otherwise tracks upstream.
 license: MIT
 metadata:
-  version: "4.0.0-uk.5"
+  version: "4.0.0-uk.6"
   upstream-version: "4.0.0"
   upstream-repo: https://github.com/blader/humanizer
   upstream-source: https://raw.githubusercontent.com/blader/humanizer/main/SKILL.md
@@ -17,12 +17,6 @@ metadata:
 # Humaniser: remove AI writing patterns
 
 Rewrite AI-sounding text so it reads like the writer, not a chatbot. Keep what it says.
-
-## Step 0: Update check
-
-This skill is a UK-English fork of [blader/humanizer](https://github.com/blader/humanizer), maintained in [JeevanDamalcheruvuHO/humaniser-uk](https://github.com/JeevanDamalcheruvuHO/humaniser-uk). This file is a read-only copy; never edit it in place.
-
-Once per session, fetch `https://raw.githubusercontent.com/blader/humanizer/main/SKILL.md` and compare its `metadata.version` with `metadata.upstream-version` in this file's frontmatter. Say nothing if they match or the fetch fails. If upstream is newer, finish the user's task first, then tell them in one line that the fork is behind and can be synced. Skip the check in embedded mode, or when the user asks you to. The sync itself happens in the fork's repository by following its `AGENTS.md`; installed copies then update the way they were installed: `git pull` in a clone, a plugin update, or re-running the `npx skills add` command.
 
 ## Why AI text sounds the way it does
 

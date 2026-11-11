@@ -4,7 +4,7 @@ Paste in text that sounds like it was written by an AI, and this skill rewrites 
 
 It's a UK-spelling fork of the excellent [`humanizer`](https://github.com/blader/humanizer) skill for Claude. Same job, same 26 patterns, just `colour` instead of `color` (and one example swapped to UK papers). It tracks upstream closely — see [What's different](#whats-different-from-the-original) and [`AGENTS.md`](AGENTS.md).
 
-Current version: **`4.0.0-uk.5`** (built from upstream `humanizer` 4.0.0).
+Current version: **`4.0.0-uk.6`** (built from upstream `humanizer` 4.0.0).
 
 ---
 
@@ -138,7 +138,7 @@ The original `humanizer` gets better over time. This fork is built to pull those
 
 ### The easy way (let the assistant do it)
 
-Just use the skill and, now and then, ask the assistant to **"check for updates from upstream and sync the UK version."** The skill's built-in check tells you when upstream has moved; the assistant then runs the repo sync below (pull upstream → re-apply the UK changes → commit → push) and refreshes your installed copy. The skill flags staleness — it does **not** silently rewrite itself, so updates always go through the repo where you can see the diff.
+A weekly check on GitHub (the "Upstream watch" workflow) fails when the original has released a version this fork doesn't have yet, and GitHub emails the maintainer. When that happens, ask an assistant in this repo to **"sync the fork with upstream"**: it runs the repo sync below (pull upstream → re-apply the UK changes → commit → push). The skill itself never checks for updates or rewrites itself, so it makes no network calls and updates always go through the repo where you can see the diff.
 
 ### The manual way (pull → convert → push)
 
@@ -164,7 +164,7 @@ grep 'upstream-version:' SKILL.md                       # what this fork is buil
 git diff <last-synced-upstream-commit> upstream/main -- SKILL.md
 ```
 
-**3. Convert to the UK version.** Run `python3 scripts/sync-upstream.py`. It rebuilds `SKILL.md` from the new upstream with the **UK Customisation Manifest** (sections A–H) applied — British spellings, the *Guardian/Times* example swap, Step 0 and the extra words — and sets the version in `SKILL.md` and both plugin manifests. Anything it could not apply is printed as a `REVIEW:` line to settle by hand, following [`AGENTS.md`](AGENTS.md). Then read the diff, update this README (version line, pattern table, full example) and add a line to its version history. An AI assistant pointed at `AGENTS.md` can do all of this for you.
+**3. Convert to the UK version.** Run `python3 scripts/sync-upstream.py`. It rebuilds `SKILL.md` from the new upstream with the **UK Customisation Manifest** (sections A–H) applied — British spellings, the *Guardian/Times* example swap, the extra fork lines — and sets the version in `SKILL.md` and both plugin manifests. Anything it could not apply is printed as a `REVIEW:` line to settle by hand, following [`AGENTS.md`](AGENTS.md). Then read the diff, update this README (version line, pattern table, full example) and add a line to its version history. An AI assistant pointed at `AGENTS.md` can do all of this for you.
 
 **4. Check and publish it:**
 
@@ -187,7 +187,7 @@ This fork is deliberately a thin layer over [`blader/humanizer`](https://github.
 
 - **British spellings** throughout (`humanise`, `colour`, `analyse`, `organisation`, `judgement`, `optimise`, …), plus full stops for periods and day-first dates.
 - **One example swapped** to UK outlets — *The Times* / *The Guardian* instead of the US/Indian papers in the "Borrowed authority" example.
-- A short **staleness check** ("Step 0") in `SKILL.md` — it flags when upstream has moved and defers the actual sync to the repo, so the loaded skill never rewrites itself out of step with the source. The checklist for that sync, the **UK Customisation Manifest**, lives in [`AGENTS.md`](AGENTS.md).
+- The checklist for each sync, the **UK Customisation Manifest**, lives in [`AGENTS.md`](AGENTS.md), with scripts to apply and verify it. The skill itself carries no update check.
 - A few **extra AI-vocabulary words** in the "Overused AI words" pattern (seamless, harness, streamline, empower, holistic, utilise, navigate, unlock, elevate, leverage, moreover/furthermore — with figurative/technical carve-outs). The first nine were proposed upstream in [blader/humanizer#241](https://github.com/blader/humanizer/issues/241), which was closed as not planned, so they stay a fork addition. They sit on a separate, clearly-labelled line, and the fork drops any that upstream adopts — as it did with `robust`, which upstream added in 3.0.0.
 - An **invisible-characters** line in the "Chatbot residue" pattern: delete zero-width characters and stray non-breaking spaces that come along with pasted chatbot output.
 
@@ -307,6 +307,7 @@ Upstream 3.0.0 rebuilt the skill around patterns **ordered strongest-first** in 
 
 Versions look like `X.Y.Z-uk.N`: the `X.Y.Z` is the upstream `humanizer` version this is built from, and `-uk.N` is the UK revision on top of it.
 
+- **`4.0.0-uk.6`** — fork-only change: **Step 0 is gone.** The skill no longer fetches upstream's `SKILL.md` to check for a new version. Snyk's scan on skills.sh flagged that fetch as a medium-risk prompt-injection route (rule W011), and upstream's skill makes no such call. A weekly GitHub Actions workflow ("Upstream watch") now fails when upstream has a newer version, which emails the maintainer. No upstream change.
 - **`4.0.0-uk.5`** — fork-only change: two additions after comparing with the unrelated [ModernOps888/humaniser](https://github.com/ModernOps888/humaniser) app. The extra AI-words line gains `leverage` (verb) and `moreover`/`furthermore` as sentence openers, and "Chatbot residue" gains a line on invisible characters (zero-width characters and stray non-breaking spaces). `sync-upstream.py` now carries every fork line over by pattern title. No upstream change.
 - **`4.0.0-uk.4`** — fork-only change: Step 0 now names all three ways an installed copy updates (`git pull` in a clone, a plugin update, or re-running the `npx skills add` command). Since `uk.3` the repo also gained `scripts/sync-upstream.py` (a repeatable sync), a GitHub Actions check, manifests for Cursor, pi and OpenAI-compatible agents, and Skills CLI install instructions; none of those changed the skill text. No upstream change.
 - **`4.0.0-uk.3`** — fork-only change: the one date in the skill is now written day first ("30 November 2022"), captured as a manifest item. Added `scripts/check-fork.py`, which checks after each sync that versions agree, no US spellings, dates or outlets leaked, the README pattern names match, and `SKILL.md` has not grown past upstream. No upstream change.

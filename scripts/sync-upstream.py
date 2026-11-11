@@ -6,7 +6,7 @@
 
 The manifest in AGENTS.md is the specification; this script is its
 mechanical form. Change the two together. The script takes the fork-only
-text (Step 0 and the 'Also (UK fork additions):' lines) from the current SKILL.md, so
+text (the 'Also (UK fork additions):' lines) from the current SKILL.md, so
 edit those there.
 
 It also sets the version in both plugin manifests. After a sync it prints what is left for a person or an assistant to do.
@@ -172,16 +172,6 @@ def build(upstream, fork, uk_revision):
                         for part in item.strip().split(" ")[0].split("/") if part}
             for word in sorted(words(watch.group(2)) & words(line.split(":**", 1)[1])):
                 problems.append(f"H: upstream now lists '{word}'; drop it from the fork line")
-
-    # F. Step 0, taken from the current fork, before the first section
-    step0 = re.search(r"^## Step 0: Update check\n.*?(?=^## )", fork_body, re.M | re.S)
-    first_section = re.search(r"^## ", body, re.M)
-    if not step0:
-        problems.append("F: current SKILL.md has no 'Step 0: Update check' section to carry over")
-    elif not first_section:
-        problems.append("F: upstream has no '## ' section to place Step 0 before")
-    else:
-        body = body[:first_section.start()] + step0.group(0) + body[first_section.start():]
 
     return f"---\n{front}---\n{body}", upstream_version
 

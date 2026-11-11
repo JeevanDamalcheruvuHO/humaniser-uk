@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """Check the UK fork after a sync or an edit.
 
-Run from anywhere:  python3 scripts/check-fork.py [repo-root]
+Run from anywhere:  python3 scripts/check-fork.py [--require-current] [repo-root]
+
+--require-current also fails when upstream has released a version the fork
+does not track yet. The weekly "Upstream watch" workflow uses it.
 
 Exits 1 if any check fails. Uses only the standard library. When the
 `upstream` git remote has been fetched, it also compares the fork with
@@ -14,11 +17,13 @@ import subprocess
 import sys
 from pathlib import Path
 
-ROOT = Path(sys.argv[1] if len(sys.argv) > 1 else Path(__file__).resolve().parent.parent)
+ARGS = [arg for arg in sys.argv[1:] if not arg.startswith("--")]
+REQUIRE_CURRENT = "--require-current" in sys.argv[1:]
+ROOT = Path(ARGS[0] if ARGS else Path(__file__).resolve().parent.parent)
 
-# How many words the fork-only text (Step 0, the extra AI-words line, the
+# How many words the fork-only text (the 'Also (UK fork additions)' lines, the
 # description sentence) may add on top of upstream's SKILL.md.
-FORK_WORD_ALLOWANCE = 300
+FORK_WORD_ALLOWANCE = 200
 
 # US spellings from manifest section B in AGENTS.md. Each is a regex.
 US_SPELLINGS = [
@@ -168,8 +173,9 @@ if version and f"- **`{version}`**" not in readme:
     fail(f"README.md: version history has no entry for {version}")
 
 # --- Fork-only content ----------------------------------------------------
-if not re.search(r"^## Step 0: Update check$", body, flags=re.M):
-    fail("SKILL.md: the 'Step 0: Update check' section is missing")
+if re.search(r"^## Step 0", body, flags=re.M) or "raw.githubusercontent.com" in body:
+    fail("SKILL.md: the skill must not fetch anything; the weekly Upstream watch "
+         "workflow checks for new upstream releases instead")
 if "**Also (UK fork additions):**" not in body:
     fail("SKILL.md: the 'Also (UK fork additions):' word line is missing")
 if "UK Customisation Manifest" in body:
@@ -216,14 +222,16 @@ for count in re.findall(r"\b(\d+) patterns\b", readme.split("## Version history"
 words = len(skill.split())
 upstream = upstream_skill()
 if upstream is None:
-    notes.append("upstream/main not available; skipped the upstream comparison "
-                 "(run: git fetch upstream)")
+    missing = ("upstream/main not available; skipped the upstream comparison "
+               "(run: git fetch upstream)")
+    (fail if REQUIRE_CURRENT else notes.append)(missing)
 else:
     upstream_frontmatter = upstream.split("---\n", 2)[1]
     latest = frontmatter_value(upstream_frontmatter, "version")
     if latest != upstream_version:
-        notes.append(f"upstream is at {latest}; this fork tracks {upstream_version}. "
-                     "Sync it by following AGENTS.md.")
+        behind = (f"upstream is at {latest}; this fork tracks {upstream_version}. "
+                  "Sync it by following AGENTS.md.")
+        (fail if REQUIRE_CURRENT else notes.append)(behind)
     else:
         upstream_headings = pattern_headings(upstream)
         if len(upstream_headings) != len(headings):

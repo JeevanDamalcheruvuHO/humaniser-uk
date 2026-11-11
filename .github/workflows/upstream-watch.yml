@@ -1,0 +1,30 @@
+name: Upstream watch
+
+# Fails when blader/humanizer has released a version this fork does not track
+# yet, so GitHub emails the maintainer. This replaces the update check the
+# skill used to run inside every session.
+#
+# GitHub pauses scheduled workflows in a public repository after 60 days
+# without a commit; re-enable it from the Actions tab if that happens.
+
+on:
+  schedule:
+    - cron: "17 7 * * 1"   # Mondays, 07:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Fetch upstream humanizer
+        run: |
+          git remote add upstream https://github.com/blader/humanizer.git
+          git fetch --depth=1 upstream main:refs/remotes/upstream/main
+
+      - name: Fail if upstream has a newer version
+        run: python3 scripts/check-fork.py --require-current
