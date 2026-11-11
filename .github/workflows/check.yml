@@ -13,7 +13,7 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       # check-fork.py compares SKILL.md with upstream when upstream/main exists.
       - name: Fetch upstream humanizer
