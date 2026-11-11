@@ -1,0 +1,11 @@
+{
+  "name": "humaniser",
+  "private": true,
+  "description": "UK English fork of humanizer: rewrite AI-sounding text so it reads like the writer without changing what it says.",
+  "license": "MIT",
+  "repository": "github:JeevanDamalcheruvuHO/humaniser-uk",
+  "keywords": ["pi-package"],
+  "pi": {
+    "skills": ["./"]
+  }
+}

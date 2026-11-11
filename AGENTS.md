@@ -6,7 +6,7 @@ Guidance for an AI assistant (Claude Code, Codex, etc.) working in this repo. Th
 
 A UK-English fork of [`blader/humanizer`](https://github.com/blader/humanizer), an agent skill implemented entirely as Markdown. The runtime artifact is `SKILL.md` (YAML frontmatter + the editor prompt). There is no build step and no code to run. **`SKILL.md` is the source of truth for the skill.**
 
-This fork is intended to be a *minimal, well-documented delta* over upstream: the same skill, with British spellings, one example's outlets swapped, a short update check, and a few extra AI-vocabulary words. Every intended difference is listed in the **UK Customisation Manifest** below (sections A–H). Do not introduce UK-specific changes that aren't captured there — add them to the manifest first.
+This fork is intended to be a *minimal, well-documented delta* over upstream: the same skill, with British spellings, one example's outlets swapped, a short update check, and a few extra AI-vocabulary words. Every intended difference is listed in the **UK Customisation Manifest** below (sections A–I). Do not introduce UK-specific changes that aren't captured there — add them to the manifest first.
 
 The manifest lives here rather than in `SKILL.md` because every word of `SKILL.md` is read on each use of the skill. Maintenance instructions do not belong in the prompt.
 
@@ -17,6 +17,9 @@ The manifest lives here rather than in `SKILL.md` because every word of `SKILL.m
 - `README.md` — for humans: what it does, install, usage, how to update.
 - `.claude-plugin/plugin.json` — the Claude plugin manifest. Its `"version"` must match `SKILL.md`.
 - `.claude-plugin/marketplace.json` — lets users add this repo as a Claude plugin marketplace.
+- `.cursor-plugin/plugin.json` — the Cursor plugin manifest. Its `"version"` must match too. It has no `skills` path, so Cursor loads the root `SKILL.md`.
+- `package.json` — makes the repo a pi package; `pi.skills` points at the repo root. It has no `version` field because pi installs from git.
+- `agents/openai.yaml` — display name, short description and default prompt for OpenAI-compatible agents such as Codex.
 - `scripts/sync-upstream.py` — applies the manifest to upstream's `SKILL.md` mechanically. `--check` verifies that the current `SKILL.md` is exactly upstream plus the manifest. Standard library only.
 - `scripts/check-fork.py` — checks the fork after a sync: versions agree, no US spellings or US dates leaked, README pattern names match, and `SKILL.md` has not grown past upstream. Standard library only.
 - `.github/workflows/check.yml` — runs `scripts/check-fork.py` on GitHub for every push to `main` and every pull request.
@@ -28,7 +31,7 @@ The manifest lives here rather than in `SKILL.md` because every word of `SKILL.m
 - `X.Y.Z` mirrors the upstream `humanizer` version this fork is synced against (stored in `SKILL.md` frontmatter as `metadata.upstream-version`).
 - `-uk.N` increments when fork content changes without an upstream bump.
 
-`metadata.version` in `SKILL.md` and `"version"` in `.claude-plugin/plugin.json` are both `X.Y.Z-uk.N`; `metadata.upstream-version` is the plain `X.Y.Z`.
+`metadata.version` in `SKILL.md` and `"version"` in `.claude-plugin/plugin.json` and `.cursor-plugin/plugin.json` are all `X.Y.Z-uk.N`; `metadata.upstream-version` is the plain `X.Y.Z`.
 
 ## How to update from upstream (the main task)
 
@@ -48,7 +51,7 @@ The manifest lives here rather than in `SKILL.md` because every word of `SKILL.m
 
 4. **Bump the version.** Set `metadata.upstream-version` to the new upstream `X.Y.Z` and `metadata.version` to `X.Y.Z-uk.1` (use `-uk.N+1` if only fork content changed without an upstream bump).
 
-   **Also bump `.claude-plugin/plugin.json` `"version"` to the same `X.Y.Z-uk.N`.** Plugin installs only treat the skill as updated when this field changes, so skipping it leaves every plugin install on the old version even after you push.
+   **Also bump `"version"` in `.claude-plugin/plugin.json` and `.cursor-plugin/plugin.json` to the same `X.Y.Z-uk.N`.** Plugin installs only treat the skill as updated when this field changes, so skipping it leaves every plugin install on the old version even after you push.
 
 5. **Sanity-check the diff.** Read `git diff SKILL.md`: the script converts spellings it knows, so look for new US spellings, new US outlets or examples, and new sections that need a manifest decision. Then run `python3 scripts/check-fork.py` and fix anything it reports; it also confirms `SKILL.md` is exactly upstream plus the manifest. Spelling subs are mechanical, but larger upstream rewrites (new pattern sections, restructures) deserve a read. Diff the result against upstream and confirm the only differences are manifest ones: no US spellings leaked into the body and no UK changes leaked into excluded content.
 
@@ -156,6 +159,10 @@ Unlike A–G (which only re-shape upstream), this is the fork's one deliberate *
 > seamless; harness (verb); streamline; empower; holistic; utilise/utilize (where "use" would do; keep the metric noun *utilisation*); navigate (figurative "navigating the complexities of…", not literal "navigate to the page"); unlock (figurative "unlock your potential/insights", not "unlock a feature/account"); elevate (figurative "elevate your brand/writing", not literal/medical "elevated").
 
 These were proposed upstream in [blader/humanizer#241](https://github.com/blader/humanizer/issues/241), which was closed as not planned on 6 September 2026, so they are a standing fork addition. Upstream adopted `robust` on its own in 3.0.0, and it was dropped from this line (nine words remain). Keep the rest as a separate, labelled line so upstream's own list stays a clean diff; drop any further word if upstream later adopts it.
+
+### I. Package files for other agents
+
+Upstream ships manifests so several agents can install the skill. The fork keeps its own copies; they are not rebuilt from upstream, so compare them with upstream's when a release changes its packaging (`git diff <last-synced-commit> upstream/main -- .claude-plugin .cursor-plugin package.json agents`). In each one the name is `humaniser`, the description starts "UK English fork of humanizer", the links point at this repository, and the keyword is `humanise`.
 
 ## Editing rules
 

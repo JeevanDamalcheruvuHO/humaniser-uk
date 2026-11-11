@@ -9,7 +9,7 @@ mechanical form. Change the two together. The script takes the fork-only
 text (Step 0 and the extra AI-words line) from the current SKILL.md, so
 edit those there.
 
-After a sync it prints what is left for a person or an assistant to do.
+It also sets the version in both plugin manifests. After a sync it prints what is left for a person or an assistant to do.
 Uses only the standard library.
 """
 
@@ -227,11 +227,15 @@ def main():
     target.write_text(built, encoding="utf-8")
     new_version = value(split_frontmatter(built, "result")[0], "version")
     if not args.output:
-        plugin_path = ROOT / ".claude-plugin" / "plugin.json"
-        plugin = plugin_path.read_text(encoding="utf-8")
-        old = json.loads(plugin)["version"]
-        plugin_path.write_text(plugin.replace(f'"version": "{old}"', f'"version": "{new_version}"', 1),
-                               encoding="utf-8")
+        for folder in (".claude-plugin", ".cursor-plugin"):
+            plugin_path = ROOT / folder / "plugin.json"
+            if not plugin_path.exists():
+                continue
+            plugin = plugin_path.read_text(encoding="utf-8")
+            old = json.loads(plugin)["version"]
+            plugin_path.write_text(
+                plugin.replace(f'"version": "{old}"', f'"version": "{new_version}"', 1),
+                encoding="utf-8")
 
     print(f"Wrote {target} as {new_version} (upstream {tracked} -> {upstream_version}).")
     for problem in problems:

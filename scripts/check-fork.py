@@ -138,6 +138,30 @@ except (OSError, ValueError) as error:
 if plugin_version != version:
     fail(f"plugin.json version is {plugin_version!r}, SKILL.md has {version!r}")
 
+# --- Manifests for other agents ------------------------------------------
+try:
+    cursor = json.loads(read(".cursor-plugin/plugin.json"))
+    if cursor.get("version") != version:
+        fail(f".cursor-plugin/plugin.json version is {cursor.get('version')!r}, SKILL.md has {version!r}")
+    if cursor.get("name") != "humaniser":
+        fail(".cursor-plugin/plugin.json: name must be 'humaniser'")
+    if "skills" in cursor:
+        fail(".cursor-plugin/plugin.json: omit 'skills' so Cursor loads the root SKILL.md")
+    package = json.loads(read("package.json"))
+    if package.get("pi", {}).get("skills") != ["./"]:
+        fail("package.json: pi.skills must be ['./'] so pi loads the root SKILL.md")
+    if "version" in package:
+        fail("package.json: do not add a version; pi installs from git")
+    if "$humaniser" not in read("agents/openai.yaml"):
+        fail("agents/openai.yaml: default_prompt must call $humaniser")
+    for label, text in ((".cursor-plugin/plugin.json", json.dumps(cursor)),
+                        ("package.json", json.dumps(package)),
+                        ("agents/openai.yaml", read("agents/openai.yaml"))):
+        if re.search(r"humanizer", text.replace("fork of humanizer", "")):
+            fail(f"{label}: says 'humanizer' where it should say 'humaniser'")
+except (OSError, ValueError) as error:
+    fail(f"other-agent manifests: {error}")
+
 if version and f"Current version: **`{version}`**" not in readme:
     fail(f"README.md: 'Current version' line does not say {version}")
 if version and f"- **`{version}`**" not in readme:

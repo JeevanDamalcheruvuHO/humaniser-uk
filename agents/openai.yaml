@@ -1,0 +1,4 @@
+interface:
+  display_name: "Humaniser"
+  short_description: "Make AI-written text sound like the writer, in British English"
+  default_prompt: "Use $humaniser to rewrite this text in my voice without changing its facts."

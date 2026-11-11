@@ -47,6 +47,16 @@ Use one install route per surface. If you already copied the skill into `~/.clau
 
 **Fallback: upload it once by hand.** Download this repo (green **Code** button → **Download ZIP**), then in **Settings → Capabilities** (it may say **Skills**) add a skill pointing at the folder with `SKILL.md` inside. This copy does not update itself; re-upload it after each release.
 
+### Other agents (Codex, pi, Cursor and the rest)
+
+The skill is plain Markdown, so it is not tied to Claude. These routes mirror the original's and have had less testing here than the Claude ones.
+
+- **Codex:** `npx skills add JeevanDamalcheruvuHO/humaniser-uk --global --agent codex`
+- **pi:** `pi install git:github.com/JeevanDamalcheruvuHO/humaniser-uk` (`pi update --extensions` pulls new versions)
+- **Every agent the Skills CLI supports** (Gemini CLI, GitHub Copilot, Windsurf, …): `npx skills add JeevanDamalcheruvuHO/humaniser-uk --global --agent '*'`
+- **Cursor:** the repo carries a Cursor plugin manifest in `.cursor-plugin/`.
+- **Anything else:** copy `SKILL.md` into the agent's skill folder.
+
 ---
 
 ## How to use it
@@ -107,13 +117,13 @@ grep 'upstream-version:' SKILL.md                       # what this fork is buil
 git diff <last-synced-upstream-commit> upstream/main -- SKILL.md
 ```
 
-**3. Convert to the UK version.** Run `python3 scripts/sync-upstream.py`. It rebuilds `SKILL.md` from the new upstream with the **UK Customisation Manifest** (sections A–H) applied — British spellings, the *Guardian/Times* example swap, Step 0 and the extra words — and sets the version in `SKILL.md` and `.claude-plugin/plugin.json`. Anything it could not apply is printed as a `REVIEW:` line to settle by hand, following [`AGENTS.md`](AGENTS.md). Then read the diff, update this README (version line, pattern table, full example) and add a line to its version history. An AI assistant pointed at `AGENTS.md` can do all of this for you.
+**3. Convert to the UK version.** Run `python3 scripts/sync-upstream.py`. It rebuilds `SKILL.md` from the new upstream with the **UK Customisation Manifest** (sections A–H) applied — British spellings, the *Guardian/Times* example swap, Step 0 and the extra words — and sets the version in `SKILL.md` and both plugin manifests. Anything it could not apply is printed as a `REVIEW:` line to settle by hand, following [`AGENTS.md`](AGENTS.md). Then read the diff, update this README (version line, pattern table, full example) and add a line to its version history. An AI assistant pointed at `AGENTS.md` can do all of this for you.
 
 **4. Check and publish it:**
 
 ```bash
 python3 scripts/check-fork.py      # versions, spellings, pattern names, size
-git add SKILL.md README.md .claude-plugin/plugin.json
+git add SKILL.md README.md .claude-plugin/plugin.json .cursor-plugin/plugin.json
 git commit -m "humaniser X.Y.Z-uk.1: sync upstream A.B.C -> X.Y.Z"
 git push
 ```
