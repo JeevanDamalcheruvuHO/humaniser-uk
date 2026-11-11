@@ -57,7 +57,7 @@ The manifest lives here rather than in `SKILL.md` because every word of `SKILL.m
 
 6. **Update `README.md`.** Bump the version line, add a version-history entry, and bring the pattern table, the full example (upstream's README example, UK-spelt) and any behaviour summary into line with the new upstream.
 
-7. **Commit and push.** Then refresh the installed copies: `git pull` in each cloned skill directory (`~/.claude/skills/humaniser` for Claude Code), and update the plugin wherever it was installed from the marketplace. A copy uploaded to the Claude app by hand must be re-uploaded.
+7. **Commit and push.** Then refresh the installed copies: `git pull` in each cloned skill directory (`~/.claude/skills/humaniser` for Claude Code), re-run `npx skills add JeevanDamalcheruvuHO/humaniser-uk --global --agent <name>` for each copy the Skills CLI installed (those are plain copies, not clones), and update the plugin wherever it was installed from the marketplace. A copy uploaded to the Claude app by hand must be re-uploaded.
 
 > The skill's built-in "Step 0: Update check" only *detects* staleness — it flags when upstream has moved and defers the actual sync to this repo protocol. It deliberately does **not** rewrite the running skill in place (that caused drift and stray edits). So the real update always happens here, in the repo, exactly as above.
 

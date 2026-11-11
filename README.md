@@ -42,7 +42,7 @@ Prefer not to use git? The Skills CLI installs into the same folder (you need No
 npx skills add JeevanDamalcheruvuHO/humaniser-uk --global --agent claude-code
 ```
 
-Use the clone or this command, not both: they write to the same `~/.claude/skills/humaniser` folder. Run the command again to pick up a new release.
+Use the clone or this command, not both: they write to the same `~/.claude/skills/humaniser` folder, and the command replaces a clone there with a plain copy, so `git pull` stops working in it. Run the command again to pick up a new release.
 
 ### On the Claude app (web, desktop, phone)
 
@@ -89,7 +89,7 @@ It asks you to confirm, then puts the skill in `~/.agents/skills/humaniser`. For
 | Droid | `droid` | `~/.factory/skills/` |
 | OpenHands | `openhands` | `~/.openhands/skills/` |
 
-The names and paths are from Skills CLI 1.8.1; its [full list](https://github.com/vercel-labs/skills/blob/main/docs/agents.md) has the rest. Only the Codex row has been tried with this fork.
+The names and paths are from Skills CLI 1.8.1; its [full list](https://github.com/vercel-labs/skills/blob/main/docs/agents.md) has the rest. Only the Codex and Claude Code rows have been tried with this fork.
 
 To install for every supported agent at once:
 
