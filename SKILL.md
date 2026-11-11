@@ -8,7 +8,7 @@ description: |
   UK English variant: British spellings, one example adapted, and a few extra AI-vocabulary words; otherwise tracks upstream.
 license: MIT
 metadata:
-  version: "4.0.0-uk.4"
+  version: "4.0.0-uk.5"
   upstream-version: "4.0.0"
   upstream-repo: https://github.com/blader/humanizer
   upstream-source: https://raw.githubusercontent.com/blader/humanizer/main/SKILL.md
@@ -256,7 +256,7 @@ The fact underneath is usually sound. Keep it and remove the dressing.
 
 **Watch for:** Actually, additionally, align with, bolstered, crucial, deep dive, delve, enduring, enhance, garner, gate/gated/gating (figurative; keep technical uses), highlight (verb), interplay, intricate/intricacies, key (adjective), landscape (abstract noun), meticulous/meticulously, pivotal, quietly, robust (figurative; keep technical uses), showcase, tapestry (abstract noun), testament, underscore (verb), valuable, vibrant
 
-**Also (UK fork additions):** seamless, harness (verb: "harness the power of…"), streamline, empower, holistic, utilise/utilize (where "use" would do; keep the metric noun *utilisation*), navigate (figurative: "navigating the complexities of…"; not literal "navigate to the page"), unlock (figurative: "unlock your potential/insights"; not "unlock a feature/account"), elevate (figurative: "elevate your brand/writing"; not literal/medical "elevated")
+**Also (UK fork additions):** seamless, harness (verb: "harness the power of…"), streamline, empower, holistic, utilise/utilize (where "use" would do; keep the metric noun *utilisation*), navigate (figurative: "navigating the complexities of…"; not literal "navigate to the page"), unlock (figurative: "unlock your potential/insights"; not "unlock a feature/account"), elevate (figurative: "elevate your brand/writing"; not literal/medical "elevated"), leverage (verb, where "use" would do; keep financial leverage), moreover/furthermore (as sentence openers)
 
 **Problem:** Models use these words far more often than people do, especially in groups. The watch lists in §13 to §18 hold phrases that are tells because of how they are used; this list holds words that are tells wherever they appear. A formal word outside these lists is not a tell by itself.
 
@@ -412,6 +412,8 @@ Remove these outright.
 ### 22. Chatbot residue
 
 **Watch for:** I hope this helps, Of course!, Certainly!, Great question!, You're absolutely right, Would you like..., Want me to...?, Should I continue?, let me know, here is a...
+
+**Also (UK fork additions):** invisible characters pasted in with chatbot output: zero-width spaces and joiners (U+200B, U+200C, U+200D, U+2060, U+FEFF), and non-breaking spaces (U+00A0) where an ordinary space belongs. Delete the first and replace the second with ordinary spaces, except in code, inside emoji, in scripts that need joiners, and between a number and its unit.
 
 **Problem:** A chatbot's greeting, praise, offer, or closing remains in text that should stand on its own. It is the most certain tell in this list and the easiest to miss when it wraps real content. Remove the wrapper and keep the content.
 

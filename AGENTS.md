@@ -6,7 +6,7 @@ Guidance for an AI assistant (Claude Code, Codex, etc.) working in this repo. Th
 
 A UK-English fork of [`blader/humanizer`](https://github.com/blader/humanizer), an agent skill implemented entirely as Markdown. The runtime artifact is `SKILL.md` (YAML frontmatter + the editor prompt). There is no build step and no code to run. **`SKILL.md` is the source of truth for the skill.**
 
-This fork is intended to be a *minimal, well-documented delta* over upstream: the same skill, with British spellings, one example's outlets swapped, a short update check, and a few extra AI-vocabulary words. Every intended difference is listed in the **UK Customisation Manifest** below (sections A–I). Do not introduce UK-specific changes that aren't captured there — add them to the manifest first.
+This fork is intended to be a *minimal, well-documented delta* over upstream: the same skill, with British spellings, one example's outlets swapped, a short update check, a few extra AI-vocabulary words, and a line on invisible characters. Every intended difference is listed in the **UK Customisation Manifest** below (sections A–I). Do not introduce UK-specific changes that aren't captured there — add them to the manifest first.
 
 The manifest lives here rather than in `SKILL.md` because every word of `SKILL.md` is read on each use of the skill. Maintenance instructions do not belong in the prompt.
 
@@ -152,13 +152,17 @@ Leave genuine Wikipedia-style geographic/cultural examples (Catalonia, Korattur 
 
 Upstream's explanatory prose may use an em dash in its own sentences. The dashes pattern's "no em dashes" rule is guidance for *humanised output*, not for the skill file — keep upstream's own punctuation verbatim rather than rewriting it.
 
-### H. Fork addition — extra AI-vocabulary words
+### H. Fork additions — extra AI-vocabulary words and invisible characters
 
-Unlike A–G (which only re-shape upstream), this is the fork's one deliberate **content** addition. After upstream's overused-AI-words list (currently §12, "Overused AI words"), append a separate **"Also (UK fork additions):"** line with these extra words, each with its carve-out. Copy the line from the current fork `SKILL.md`; it holds:
+Unlike A–G (which only re-shape upstream), these are the fork's deliberate **content** additions. Each is a line starting `**Also (UK fork additions):**`, placed after the "Watch for" line of the pattern it belongs to. `sync-upstream.py` carries every such line over from the current `SKILL.md` and finds its pattern by title, so edit the lines there.
 
-> seamless; harness (verb); streamline; empower; holistic; utilise/utilize (where "use" would do; keep the metric noun *utilisation*); navigate (figurative "navigating the complexities of…", not literal "navigate to the page"); unlock (figurative "unlock your potential/insights", not "unlock a feature/account"); elevate (figurative "elevate your brand/writing", not literal/medical "elevated").
+**H1. Extra AI words.** After upstream's overused-AI-words list (currently §12, "Overused AI words"), append a separate **"Also (UK fork additions):"** line with these extra words, each with its carve-out. Copy the line from the current fork `SKILL.md`; it holds:
 
-These were proposed upstream in [blader/humanizer#241](https://github.com/blader/humanizer/issues/241), which was closed as not planned on 6 September 2026, so they are a standing fork addition. Upstream adopted `robust` on its own in 3.0.0, and it was dropped from this line (nine words remain). Keep the rest as a separate, labelled line so upstream's own list stays a clean diff; drop any further word if upstream later adopts it.
+> seamless; harness (verb); streamline; empower; holistic; utilise/utilize (where "use" would do; keep the metric noun *utilisation*); navigate (figurative "navigating the complexities of…", not literal "navigate to the page"); unlock (figurative "unlock your potential/insights", not "unlock a feature/account"); elevate (figurative "elevate your brand/writing", not literal/medical "elevated"); leverage (verb, where "use" would do; keep financial leverage); moreover/furthermore (as sentence openers).
+
+The first nine were proposed upstream in [blader/humanizer#241](https://github.com/blader/humanizer/issues/241), which was closed as not planned on 6 September 2026, so they are a standing fork addition. Upstream adopted `robust` on its own in 3.0.0, and it was dropped from this line. `leverage` and `moreover`/`furthermore` were added on 11 November 2026 after comparing the fork with the unrelated [ModernOps888/humaniser](https://github.com/ModernOps888/humaniser) word lists; they have not been proposed upstream. Keep the line separate and labelled so upstream's own list stays a clean diff; drop any word upstream later adopts (the sync script reports those).
+
+**H2. Invisible characters.** In the "Chatbot residue" pattern (currently §22), a fork line tells the editor to delete zero-width characters and replace stray non-breaking spaces, with carve-outs for code, emoji, scripts that need joiners, and number-unit spacing. Upstream covers curly quotes but not these. Added on 11 November 2026 from the same comparison.
 
 ### I. Package files for other agents
 

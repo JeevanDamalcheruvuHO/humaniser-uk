@@ -6,7 +6,7 @@
 
 The manifest in AGENTS.md is the specification; this script is its
 mechanical form. Change the two together. The script takes the fork-only
-text (Step 0 and the extra AI-words line) from the current SKILL.md, so
+text (Step 0 and the 'Also (UK fork additions):' lines) from the current SKILL.md, so
 edit those there.
 
 It also sets the version in both plugin manifests. After a sync it prints what is left for a person or an assistant to do.
@@ -146,21 +146,32 @@ def build(upstream, fork, uk_revision):
     if not body.lstrip().startswith("# Humaniser:"):
         problems.append("E: title does not start with '# Humaniser:'")
 
-    # H. Extra AI-vocabulary line, taken from the current fork
-    words_line = re.search(r"^\*\*Also \(UK fork additions\):\*\*.*$", fork_body, re.M)
-    watch = re.search(r"(^### \d+\. Overused AI words\n\n\*\*Watch for:\*\*([^\n]*)\n)", body, re.M)
-    if not words_line:
+    # H. Fork lines, taken from the current fork. Each "Also (UK fork
+    # additions):" line goes back under the pattern it sits in, found by title.
+    fork_lines = []
+    title = None
+    for line in fork_body.splitlines():
+        heading = re.match(r"### \d+\. (.+)$", line)
+        if heading:
+            title = heading.group(1)
+        elif line.startswith("**Also (UK fork additions):**"):
+            fork_lines.append((title, line))
+    if not fork_lines:
         problems.append("H: current SKILL.md has no 'Also (UK fork additions):' line to carry over")
-    elif not watch:
-        problems.append("H: upstream has no 'Overused AI words' watch list to append to")
-    else:
-        body = body.replace(watch.group(1), watch.group(1) + "\n" + words_line.group(0) + "\n", 1)
-        upstream_words = {w.strip().split(" ")[0].split("/")[0].lower()
-                          for w in watch.group(2).split(",")}
-        fork_words = {w.strip().split(" ")[0].split("/")[0].lower()
-                      for w in words_line.group(0).split(":**", 1)[1].split(",")}
-        for word in sorted(upstream_words & fork_words):
-            problems.append(f"H: upstream now lists '{word}'; drop it from the fork line")
+    for title, line in fork_lines:
+        watch = re.search(rf"(^### \d+\. {re.escape(title or '')}\n\n\*\*Watch for:\*\*([^\n]*)\n)",
+                          body, re.M)
+        if not watch:
+            problems.append(f"H: upstream has no '{title}' pattern with a watch list; "
+                            "place the fork line by hand")
+            continue
+        body = body.replace(watch.group(1), watch.group(1) + "\n" + line + "\n", 1)
+        if title == "Overused AI words":
+            def words(text):
+                return {part.lower() for item in text.split(",")
+                        for part in item.strip().split(" ")[0].split("/") if part}
+            for word in sorted(words(watch.group(2)) & words(line.split(":**", 1)[1])):
+                problems.append(f"H: upstream now lists '{word}'; drop it from the fork line")
 
     # F. Step 0, taken from the current fork, before the first section
     step0 = re.search(r"^## Step 0: Update check\n.*?(?=^## )", fork_body, re.M | re.S)

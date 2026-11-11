@@ -18,7 +18,7 @@ ROOT = Path(sys.argv[1] if len(sys.argv) > 1 else Path(__file__).resolve().paren
 
 # How many words the fork-only text (Step 0, the extra AI-words line, the
 # description sentence) may add on top of upstream's SKILL.md.
-FORK_WORD_ALLOWANCE = 250
+FORK_WORD_ALLOWANCE = 300
 
 # US spellings from manifest section B in AGENTS.md. Each is a regex.
 US_SPELLINGS = [

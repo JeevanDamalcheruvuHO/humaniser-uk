@@ -4,7 +4,7 @@ Paste in text that sounds like it was written by an AI, and this skill rewrites 
 
 It's a UK-spelling fork of the excellent [`humanizer`](https://github.com/blader/humanizer) skill for Claude. Same job, same 26 patterns, just `colour` instead of `color` (and one example swapped to UK papers). It tracks upstream closely — see [What's different](#whats-different-from-the-original) and [`AGENTS.md`](AGENTS.md).
 
-Current version: **`4.0.0-uk.4`** (built from upstream `humanizer` 4.0.0).
+Current version: **`4.0.0-uk.5`** (built from upstream `humanizer` 4.0.0).
 
 ---
 
@@ -188,7 +188,8 @@ This fork is deliberately a thin layer over [`blader/humanizer`](https://github.
 - **British spellings** throughout (`humanise`, `colour`, `analyse`, `organisation`, `judgement`, `optimise`, …), plus full stops for periods and day-first dates.
 - **One example swapped** to UK outlets — *The Times* / *The Guardian* instead of the US/Indian papers in the "Borrowed authority" example.
 - A short **staleness check** ("Step 0") in `SKILL.md` — it flags when upstream has moved and defers the actual sync to the repo, so the loaded skill never rewrites itself out of step with the source. The checklist for that sync, the **UK Customisation Manifest**, lives in [`AGENTS.md`](AGENTS.md).
-- A few **extra AI-vocabulary words** in the "Overused AI words" pattern (seamless, harness, streamline, empower, holistic, utilise, navigate, unlock, elevate — with figurative/technical carve-outs). These were proposed upstream in [blader/humanizer#241](https://github.com/blader/humanizer/issues/241), which was closed as not planned, so they stay a fork addition. They sit on a separate, clearly-labelled line, and the fork drops any that upstream adopts — as it did with `robust`, which upstream added in 3.0.0.
+- A few **extra AI-vocabulary words** in the "Overused AI words" pattern (seamless, harness, streamline, empower, holistic, utilise, navigate, unlock, elevate, leverage, moreover/furthermore — with figurative/technical carve-outs). The first nine were proposed upstream in [blader/humanizer#241](https://github.com/blader/humanizer/issues/241), which was closed as not planned, so they stay a fork addition. They sit on a separate, clearly-labelled line, and the fork drops any that upstream adopts — as it did with `robust`, which upstream added in 3.0.0.
+- An **invisible-characters** line in the "Chatbot residue" pattern: delete zero-width characters and stray non-breaking spaces that come along with pasted chatbot output.
 
 Everything else — the patterns, the wording, the structure — tracks upstream.
 
@@ -253,7 +254,7 @@ Upstream 3.0.0 rebuilt the skill around patterns **ordered strongest-first** in 
 
 | # | Pattern | Before | After |
 |---|---------|--------|-------|
-| 22 | **Chatbot residue** | "Great question!… I hope this helps!" | Remove the wrapper, keep the content |
+| 22 | **Chatbot residue** (+ UK fork addition: invisible characters) | "Great question!… I hope this helps!" | Remove the wrapper, keep the content |
 | 23 | **Knowledge-limit disclaimers and guesses** | "While details are limited…", "maintains a low profile" | Say what the source doesn't show, or cut it |
 | 24 | **A heading repeated in the first sentence** | "## Performance" + "Speed matters." | Let the heading do the work |
 | 25 | **Writing about the document instead of its subject** | "This function was added to replace…" / "compiled from… flagged rather than guessed" | Describe the subject, not the doc; keep a real source credit |
@@ -306,6 +307,7 @@ Upstream 3.0.0 rebuilt the skill around patterns **ordered strongest-first** in 
 
 Versions look like `X.Y.Z-uk.N`: the `X.Y.Z` is the upstream `humanizer` version this is built from, and `-uk.N` is the UK revision on top of it.
 
+- **`4.0.0-uk.5`** — fork-only change: two additions after comparing with the unrelated [ModernOps888/humaniser](https://github.com/ModernOps888/humaniser) app. The extra AI-words line gains `leverage` (verb) and `moreover`/`furthermore` as sentence openers, and "Chatbot residue" gains a line on invisible characters (zero-width characters and stray non-breaking spaces). `sync-upstream.py` now carries every fork line over by pattern title. No upstream change.
 - **`4.0.0-uk.4`** — fork-only change: Step 0 now names all three ways an installed copy updates (`git pull` in a clone, a plugin update, or re-running the `npx skills add` command). Since `uk.3` the repo also gained `scripts/sync-upstream.py` (a repeatable sync), a GitHub Actions check, manifests for Cursor, pi and OpenAI-compatible agents, and Skills CLI install instructions; none of those changed the skill text. No upstream change.
 - **`4.0.0-uk.3`** — fork-only change: the one date in the skill is now written day first ("30 November 2022"), captured as a manifest item. Added `scripts/check-fork.py`, which checks after each sync that versions agree, no US spellings, dates or outlets leaked, the README pattern names match, and `SKILL.md` has not grown past upstream. No upstream change.
 - **`4.0.0-uk.2`** — fork-only change: the **UK Customisation Manifest moved out of `SKILL.md` into [`AGENTS.md`](AGENTS.md)** and Step 0 was cut to one short paragraph (it now also skips itself in embedded mode). The skill had grown to about 6,800 words against upstream's 5,200, and the extra was maintenance text read on every use. This README's full example is now upstream's current one, UK-spelt, and stale wording was corrected (the #241 proposal was closed upstream, the manual-sync commands, the plugin version bump). No upstream change.
