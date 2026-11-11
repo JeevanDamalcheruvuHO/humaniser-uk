@@ -6,7 +6,7 @@ Guidance for an AI assistant (Claude Code, Codex, etc.) working in this repo. Th
 
 A UK-English fork of [`blader/humanizer`](https://github.com/blader/humanizer), a Claude Code / OpenCode skill implemented entirely as Markdown. The runtime artifact is `SKILL.md` (YAML frontmatter + the editor prompt). There is no build step and no code to run. **`SKILL.md` is the source of truth.**
 
-This fork is intended to be a *minimal, well-documented delta* over upstream: the same skill, with British spellings and one example outlet swapped. Every intended difference is listed inside `SKILL.md` under **"UK Customisation Manifest" (sections A–G)**. Do not introduce UK-specific changes that aren't captured there — add them to the manifest first.
+This fork is intended to be a *minimal, well-documented delta* over upstream: the same skill, with British spellings and one example outlet swapped. Every intended difference is listed inside `SKILL.md` under **"UK Customisation Manifest" (sections A–H)**. Do not introduce UK-specific changes that aren't captured there — add them to the manifest first.
 
 ## Key files
 
@@ -33,14 +33,15 @@ The frontmatter `version:` is `X.Y.Z-uk.N`; `upstream-version:` is the plain `X.
 
 2. **Compare versions.** Read upstream's frontmatter `version:` and this fork's `upstream-version:`. Equal → nothing to do. Different → continue.
 
-3. **Re-apply the UK Customisation Manifest.** Start from the *fresh upstream content* and work through manifest sections A–G in order:
-   - **A. Frontmatter** — `name: humaniser`; keep `upstream-source` / `upstream-repo` / `upstream-version`; ensure `WebFetch` + `Bash` in `allowed-tools`; add the "UK English variant" line to `description`.
+3. **Re-apply the UK Customisation Manifest.** Start from the *fresh upstream content* and work through manifest sections A–H in order. The manifest names patterns by title because upstream renumbers them; where this summary and the manifest differ, the manifest wins:
+   - **A. Frontmatter** — `name: humaniser`; keep `upstream-source` / `upstream-repo` / `upstream-version` under `metadata:`; add the "UK English variant" line to `description`. Do **not** re-add `allowed-tools` or `compatibility` (upstream dropped them for cross-agent portability).
    - **B. Spelling table** — apply the US→UK whole-word, case-preserving substitutions (colour, analyse, organisation, judgement, colonisation, memoisation, etc.). Do **not** touch the exclusions (`license: MIT`, code identifiers, URLs, the curly-quote typography example).
-   - **C. Targeted phrase swaps** — e.g. in §14, "a period (start a new sentence)" → "a full stop (...)".
-   - **D. Example outlet swaps** — §2 and the Full Example: US/Indian papers → *The Guardian* / *The Times*.
+   - **C. Targeted phrase swaps** — in the dashes pattern, "Replace each dash with a period, ..." → "... a full stop, ..."; treat any other punctuation-sense "period(s)" the same way.
+   - **D. Example outlet swaps** — the prestige-list example in the "Borrowed authority" pattern (Before and After): US/Indian papers → *The Times* / *The Guardian*.
    - **E. Title** — `# Humaniser: ...`.
    - **F. Preserve** the Step 0 section and the manifest itself.
    - **G.** Leave upstream's *own* prose em dashes alone (the no-em-dash rule is for humanised output, not this file).
+   - **H. Fork addition** — after upstream's overused-AI-words list, re-append the labelled "Also (UK fork additions):" line; drop any word upstream has since adopted.
 
 4. **Bump the version.** Set `upstream-version:` to the new upstream `X.Y.Z` and `version:` to `X.Y.Z-uk.1` (use `-uk.N+1` if only the manifest changed without an upstream bump).
 

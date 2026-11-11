@@ -107,7 +107,7 @@ grep '^upstream-version:' SKILL.md                      # what this fork is buil
 git diff <last-synced-upstream-commit> upstream/main -- SKILL.md
 ```
 
-**3. Convert to the UK version.** Apply the new upstream changes to `SKILL.md`, then walk the **UK Customisation Manifest** (sections A–G) so the British spellings, the *Guardian/Times* example swap, and the fork-only sections are re-applied. This is fiddly by hand, so the simplest path is to ask an AI assistant — *"update this fork to the latest upstream and re-apply the UK manifest"* — and point it at [`AGENTS.md`](AGENTS.md), which is the exact step-by-step recipe. Then bump the frontmatter: `version: X.Y.Z-uk.1` and `upstream-version: X.Y.Z`, and add a line to this README's version history.
+**3. Convert to the UK version.** Apply the new upstream changes to `SKILL.md`, then walk the **UK Customisation Manifest** (sections A–H) so the British spellings, the *Guardian/Times* example swap, and the fork-only sections are re-applied. This is fiddly by hand, so the simplest path is to ask an AI assistant — *"update this fork to the latest upstream and re-apply the UK manifest"* — and point it at [`AGENTS.md`](AGENTS.md), which is the exact step-by-step recipe. Then bump the frontmatter: `version: X.Y.Z-uk.1` and `upstream-version: X.Y.Z`, and add a line to this README's version history.
 
 **4. Publish it:**
 
