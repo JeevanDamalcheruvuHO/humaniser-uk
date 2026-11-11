@@ -17,6 +17,7 @@ The manifest lives here rather than in `SKILL.md` because every word of `SKILL.m
 - `README.md` — for humans: what it does, install, usage, how to update.
 - `.claude-plugin/plugin.json` — the Claude plugin manifest. Its `"version"` must match `SKILL.md`.
 - `.claude-plugin/marketplace.json` — lets users add this repo as a Claude plugin marketplace.
+- `scripts/check-fork.py` — checks the fork after a sync: versions agree, no US spellings or US dates leaked, README pattern names match, and `SKILL.md` has not grown past upstream. Standard library only.
 - `LICENSE` — MIT.
 
 ## Versioning
@@ -43,7 +44,7 @@ The manifest lives here rather than in `SKILL.md` because every word of `SKILL.m
 
    **Also bump `.claude-plugin/plugin.json` `"version"` to the same `X.Y.Z-uk.N`.** Plugin installs only treat the skill as updated when this field changes, so skipping it leaves every plugin install on the old version even after you push.
 
-5. **Sanity-check the diff.** Spelling subs are mechanical, but larger upstream rewrites (new pattern sections, restructures) deserve a read. Diff the result against upstream and confirm the only differences are manifest ones: no US spellings leaked into the body and no UK changes leaked into excluded content.
+5. **Sanity-check the diff.** Run `python3 scripts/check-fork.py` and fix anything it reports. Spelling subs are mechanical, but larger upstream rewrites (new pattern sections, restructures) deserve a read. Diff the result against upstream and confirm the only differences are manifest ones: no US spellings leaked into the body and no UK changes leaked into excluded content.
 
 6. **Update `README.md`.** Bump the version line, add a version-history entry, and bring the pattern table, the full example (upstream's README example, UK-spelt) and any behaviour summary into line with the new upstream.
 
@@ -118,6 +119,7 @@ Do **not** change:
 ### C. Targeted phrase swaps
 
 - In the **dashes pattern** (currently §8, "Dashes as the universal connector"), change the replacement-preference phrase "Replace each dash with a period, comma, colon, or parentheses" → "Replace each dash with a full stop, comma, colon, or parentheses". Treat any other punctuation-sense "period(s)" the same way ("full stop(s)"), such as "with periods between words" in the one-line-closers pattern (currently §2).
+- Write dates day first. In "When not to act", "November 30, 2022" → "30 November 2022". Treat any other month-day-year date in the skill's own prose the same way.
 
 ### D. Example outlet swaps
 

@@ -8,7 +8,7 @@ description: |
   UK English variant: British spellings, one example adapted, and a few extra AI-vocabulary words; otherwise tracks upstream.
 license: MIT
 metadata:
-  version: "4.0.0-uk.2"
+  version: "4.0.0-uk.3"
   upstream-version: "4.0.0"
   upstream-repo: https://github.com/blader/humanizer
   upstream-source: https://raw.githubusercontent.com/blader/humanizer/main/SKILL.md
@@ -495,7 +495,7 @@ A model writes for a reader who shares no context, because that fits the widest 
 
 ## When not to act
 
-Each pattern describes a default choice, and a person can make any one of them on purpose. Leave a watched phrase alone inside a quotation, a title, a proper name, or a passage that discusses the phrase rather than uses it. Salutations and sign-offs on a letter or comment predate chatbots. Text written before November 30, 2022 is not AI-written. People who judge by feel do little better than chance, and human writing keeps absorbing AI habits, so several tells together are the safeguard.
+Each pattern describes a default choice, and a person can make any one of them on purpose. Leave a watched phrase alone inside a quotation, a title, a proper name, or a passage that discusses the phrase rather than uses it. Salutations and sign-offs on a letter or comment predate chatbots. Text written before 30 November 2022 is not AI-written. People who judge by feel do little better than chance, and human writing keeps absorbing AI habits, so several tells together are the safeguard.
 
 Keep the details that carry the writer's voice unless they hurt the meaning:
 

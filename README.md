@@ -4,7 +4,7 @@ Paste in text that sounds like it was written by an AI, and this skill rewrites 
 
 It's a UK-spelling fork of the excellent [`humanizer`](https://github.com/blader/humanizer) skill for Claude. Same job, same 26 patterns, just `colour` instead of `color` (and one example swapped to UK papers). It tracks upstream closely — see [What's different](#whats-different-from-the-original) and [`AGENTS.md`](AGENTS.md).
 
-Current version: **`4.0.0-uk.2`** (built from upstream `humanizer` 4.0.0).
+Current version: **`4.0.0-uk.3`** (built from upstream `humanizer` 4.0.0).
 
 ---
 
@@ -109,9 +109,10 @@ git diff <last-synced-upstream-commit> upstream/main -- SKILL.md
 
 **3. Convert to the UK version.** Apply the new upstream changes to `SKILL.md`, then walk the **UK Customisation Manifest** (sections A–H) so the British spellings, the *Guardian/Times* example swap, and the fork-only sections are re-applied. This is fiddly by hand, so the simplest path is to ask an AI assistant — *"update this fork to the latest upstream and re-apply the UK manifest"* — and point it at [`AGENTS.md`](AGENTS.md), which is the exact step-by-step recipe. Then bump the version in three places: `version: X.Y.Z-uk.1` and `upstream-version: X.Y.Z` under `metadata:` in `SKILL.md`, and `"version"` in `.claude-plugin/plugin.json` (plugin installs only update when that field changes). Add a line to this README's version history.
 
-**4. Publish it:**
+**4. Check and publish it:**
 
 ```bash
+python3 scripts/check-fork.py      # versions, spellings, pattern names, size
 git add SKILL.md README.md .claude-plugin/plugin.json
 git commit -m "humaniser X.Y.Z-uk.1: sync upstream A.B.C -> X.Y.Z"
 git push
@@ -127,7 +128,7 @@ git push
 
 This fork is deliberately a thin layer over [`blader/humanizer`](https://github.com/blader/humanizer). The only intended differences:
 
-- **British spellings** throughout (`humanise`, `colour`, `analyse`, `organisation`, `judgement`, `optimise`, …).
+- **British spellings** throughout (`humanise`, `colour`, `analyse`, `organisation`, `judgement`, `optimise`, …), plus full stops for periods and day-first dates.
 - **One example swapped** to UK outlets — *The Times* / *The Guardian* instead of the US/Indian papers in the "Borrowed authority" example.
 - A short **staleness check** ("Step 0") in `SKILL.md` — it flags when upstream has moved and defers the actual sync to the repo, so the loaded skill never rewrites itself out of step with the source. The checklist for that sync, the **UK Customisation Manifest**, lives in [`AGENTS.md`](AGENTS.md).
 - A few **extra AI-vocabulary words** in the "Overused AI words" pattern (seamless, harness, streamline, empower, holistic, utilise, navigate, unlock, elevate — with figurative/technical carve-outs). These were proposed upstream in [blader/humanizer#241](https://github.com/blader/humanizer/issues/241), which was closed as not planned, so they stay a fork addition. They sit on a separate, clearly-labelled line, and the fork drops any that upstream adopts — as it did with `robust`, which upstream added in 3.0.0.
@@ -248,6 +249,7 @@ Upstream 3.0.0 rebuilt the skill around patterns **ordered strongest-first** in 
 
 Versions look like `X.Y.Z-uk.N`: the `X.Y.Z` is the upstream `humanizer` version this is built from, and `-uk.N` is the UK revision on top of it.
 
+- **`4.0.0-uk.3`** — fork-only change: the one date in the skill is now written day first ("30 November 2022"), captured as a manifest item. Added `scripts/check-fork.py`, which checks after each sync that versions agree, no US spellings, dates or outlets leaked, the README pattern names match, and `SKILL.md` has not grown past upstream. No upstream change.
 - **`4.0.0-uk.2`** — fork-only change: the **UK Customisation Manifest moved out of `SKILL.md` into [`AGENTS.md`](AGENTS.md)** and Step 0 was cut to one short paragraph (it now also skips itself in embedded mode). The skill had grown to about 6,800 words against upstream's 5,200, and the extra was maintenance text read on every use. This README's full example is now upstream's current one, UK-spelt, and stale wording was corrected (the #241 proposal was closed upstream, the manual-sync commands, the plugin version bump). No upstream change.
 - **`4.0.0-uk.1`** — tracks upstream **4.0.0**. The big behaviour change: upstream **reversed the "never invent facts" rule** from 2.9.x. Where the text is generic, the skill may now add a specific detail it knows to be true; it still keeps every claim the original made and treats a lost or changed claim as an error (§14 and §17 follow suit). Also: 15 "After" examples reworked, file mode now re-reads the whole file from disk and reports how many sections it covered, text being edited that contains fake closing tags or "system"/"operator" notes is treated as material rather than instructions, §15 renamed "Shallow -ing phrases", a blank line above each pattern label, and the description no longer cites Wikipedia. Still 26 patterns. Fork-side: four spellings that had slipped through earlier syncs are now in the manifest (candour, defence, labelled, centimetre), the §2 "periods between words" became "full stops", and `$schema` was dropped from `plugin.json` as upstream did. UK-adapted as usual.
 - **`3.1.0-uk.1`** — tracks upstream **3.1.0**. Adds group **F, "Writing for the wrong reader"** (§26, re-explaining what the reader already knows), a renamed and expanded §25 ("Writing about the document instead of its subject"), and various watch-list tidy-ups (§12 drops `emphasising`/`fostering`, now covered by §15; §16 drops words covered elsewhere). 25 → 26 patterns. UK-adapted as usual.
