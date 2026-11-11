@@ -1,0 +1,25 @@
+name: Check fork
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # check-fork.py compares SKILL.md with upstream when upstream/main exists.
+      - name: Fetch upstream humanizer
+        run: |
+          git remote add upstream https://github.com/blader/humanizer.git
+          git fetch --depth=1 upstream main:refs/remotes/upstream/main
+
+      - name: Run the fork checks
+        run: python3 scripts/check-fork.py

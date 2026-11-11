@@ -19,6 +19,7 @@ The manifest lives here rather than in `SKILL.md` because every word of `SKILL.m
 - `.claude-plugin/marketplace.json` — lets users add this repo as a Claude plugin marketplace.
 - `scripts/sync-upstream.py` — applies the manifest to upstream's `SKILL.md` mechanically. `--check` verifies that the current `SKILL.md` is exactly upstream plus the manifest. Standard library only.
 - `scripts/check-fork.py` — checks the fork after a sync: versions agree, no US spellings or US dates leaked, README pattern names match, and `SKILL.md` has not grown past upstream. Standard library only.
+- `.github/workflows/check.yml` — runs `scripts/check-fork.py` on GitHub for every push to `main` and every pull request.
 - `LICENSE` — MIT.
 
 ## Versioning
