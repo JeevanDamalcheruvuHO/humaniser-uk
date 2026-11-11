@@ -4,7 +4,7 @@ Paste in text that sounds like it was written by an AI, and this skill rewrites 
 
 It's a UK-spelling fork of the excellent [`humanizer`](https://github.com/blader/humanizer) skill for Claude. Same job, same 26 patterns, just `colour` instead of `color` (and one example swapped to UK papers). It tracks upstream closely — see [What's different](#whats-different-from-the-original) and [`AGENTS.md`](AGENTS.md).
 
-Current version: **`4.0.0-uk.1`** (built from upstream `humanizer` 4.0.0).
+Current version: **`4.0.0-uk.2`** (built from upstream `humanizer` 4.0.0).
 
 ---
 
@@ -85,7 +85,7 @@ Just use the skill and, now and then, ask the assistant to **"check for updates 
 
 ### The manual way (pull → convert → push)
 
-Everything that makes this a UK fork is a tidy checklist — the **UK Customisation Manifest** inside [`SKILL.md`](SKILL.md) — so an update is always: take the new upstream file, re-apply that checklist, push.
+Everything that makes this a UK fork is a tidy checklist — the **UK Customisation Manifest** in [`AGENTS.md`](AGENTS.md) — so an update is always: take the new upstream file, re-apply that checklist, push.
 
 **One-time setup** (the maintainer's clone already has this; a fresh clone needs it):
 
@@ -100,26 +100,26 @@ git remote set-url --push upstream DISABLED   # never push to the original by ac
 ```bash
 # 1. Get the latest original and see if it moved
 git fetch upstream
-git show upstream/main:SKILL.md | grep '^version:'      # upstream's version
-grep '^upstream-version:' SKILL.md                      # what this fork is built from
+git show upstream/main:SKILL.md | grep ' version:'      # upstream's version
+grep 'upstream-version:' SKILL.md                       # what this fork is built from
 
 # 2. If they differ, see exactly what changed upstream
 git diff <last-synced-upstream-commit> upstream/main -- SKILL.md
 ```
 
-**3. Convert to the UK version.** Apply the new upstream changes to `SKILL.md`, then walk the **UK Customisation Manifest** (sections A–H) so the British spellings, the *Guardian/Times* example swap, and the fork-only sections are re-applied. This is fiddly by hand, so the simplest path is to ask an AI assistant — *"update this fork to the latest upstream and re-apply the UK manifest"* — and point it at [`AGENTS.md`](AGENTS.md), which is the exact step-by-step recipe. Then bump the frontmatter: `version: X.Y.Z-uk.1` and `upstream-version: X.Y.Z`, and add a line to this README's version history.
+**3. Convert to the UK version.** Apply the new upstream changes to `SKILL.md`, then walk the **UK Customisation Manifest** (sections A–H) so the British spellings, the *Guardian/Times* example swap, and the fork-only sections are re-applied. This is fiddly by hand, so the simplest path is to ask an AI assistant — *"update this fork to the latest upstream and re-apply the UK manifest"* — and point it at [`AGENTS.md`](AGENTS.md), which is the exact step-by-step recipe. Then bump the version in three places: `version: X.Y.Z-uk.1` and `upstream-version: X.Y.Z` under `metadata:` in `SKILL.md`, and `"version"` in `.claude-plugin/plugin.json` (plugin installs only update when that field changes). Add a line to this README's version history.
 
 **4. Publish it:**
 
 ```bash
-git add SKILL.md README.md
+git add SKILL.md README.md .claude-plugin/plugin.json
 git commit -m "humaniser X.Y.Z-uk.1: sync upstream A.B.C -> X.Y.Z"
 git push
 ```
 
-**5. Refresh your other devices:** on each computer running Claude Code, `git pull` (or nothing, if it's symlinked to this clone); in the Claude app, re-upload the skill.
+**5. Refresh your other devices:** on each computer running Claude Code, `git pull` (or nothing, if it's symlinked to this clone); in the Claude app, update the plugin, or re-upload the skill if you added it by hand.
 
-> Tip: never `git merge upstream/main` — this fork diverges from the original on purpose (spelling + the extra sections), so a merge just causes conflicts. Always *re-apply the manifest* instead.
+> Tip: never `git merge upstream/main` — this fork diverges from the original on purpose (spelling + the fork-only additions), so a merge just causes conflicts. Always *re-apply the manifest* instead.
 
 ---
 
@@ -129,8 +129,8 @@ This fork is deliberately a thin layer over [`blader/humanizer`](https://github.
 
 - **British spellings** throughout (`humanise`, `colour`, `analyse`, `organisation`, `judgement`, `optimise`, …).
 - **One example swapped** to UK outlets — *The Times* / *The Guardian* instead of the US/Indian papers in the "Borrowed authority" example.
-- A **staleness check** ("Step 0") and the **UK Customisation Manifest** baked into `SKILL.md` — Step 0 flags when upstream has moved and defers the actual sync to the repo, so the loaded skill never rewrites itself out of step with the source.
-- A few **extra AI-vocabulary words** in the "Overused AI words" pattern (seamless, harness, streamline, empower, holistic, utilise, navigate, unlock, elevate — with figurative/technical carve-outs). These are proposed upstream in [blader/humanizer#241](https://github.com/blader/humanizer/issues/241), carried on a separate, clearly-labelled line, and the fork drops any that upstream adopts — as it did with `robust`, which upstream added in 3.0.0.
+- A short **staleness check** ("Step 0") in `SKILL.md` — it flags when upstream has moved and defers the actual sync to the repo, so the loaded skill never rewrites itself out of step with the source. The checklist for that sync, the **UK Customisation Manifest**, lives in [`AGENTS.md`](AGENTS.md).
+- A few **extra AI-vocabulary words** in the "Overused AI words" pattern (seamless, harness, streamline, empower, holistic, utilise, navigate, unlock, elevate — with figurative/technical carve-outs). These were proposed upstream in [blader/humanizer#241](https://github.com/blader/humanizer/issues/241), which was closed as not planned, so they stay a fork addition. They sit on a separate, clearly-labelled line, and the fork drops any that upstream adopts — as it did with `robust`, which upstream added in 3.0.0.
 
 Everything else — the patterns, the wording, the structure — tracks upstream.
 
@@ -140,7 +140,7 @@ Everything else — the patterns, the wording, the structure — tracks upstream
 
 Based on [Wikipedia's "Signs of AI writing"](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing) guide, maintained by WikiProject AI Cleanup. That guide comes from observations of thousands of instances of AI-generated text.
 
-The skill also includes a final "obviously AI generated" audit pass and a second rewrite, to catch lingering AI-isms in the first draft.
+The skill marks every tell it finds, drafts a rewrite, checks the draft for dropped claims and for tells that survived, and then writes the final version. Where the text is generic it may add a specific detail it knows to be true (new in 4.0.0), and it keeps every claim the original made.
 
 > **Key insight from Wikipedia:** "LLMs use statistical algorithms to guess what should come next. The result tends toward the most statistically likely result that applies to the widest variety of cases."
 
@@ -211,32 +211,28 @@ Upstream 3.0.0 rebuilt the skill around patterns **ordered strongest-first** in 
 ## Full example
 
 **Before (AI-sounding):**
-> Great question! Here is an essay on this topic. I hope this helps!
+> I recently spent five unforgettable days in Lisbon last October, and let me tell you — this city completely stole my heart. From the moment I checked into my charming hotel perched high in the historic Alfama district, I knew I was somewhere truly special.
 >
-> AI-assisted coding serves as an enduring testament to the transformative potential of large language models, marking a pivotal moment in the evolution of software development. In today's rapidly evolving technological landscape, these groundbreaking tools—nestled at the intersection of research and practice—are reshaping how engineers ideate, iterate, and deliver, underscoring their vital role in modern workflows.
+> Yes, the famous hills are challenging — with countless stairs between my hotel and everything else, my legs certainly felt it! — but every climb rewards you with breathtaking, panoramic views that make it all worthwhile.
 >
-> At its core, the value proposition is clear: streamlining processes, enhancing collaboration, and fostering alignment. It's not just about autocomplete; it's about unlocking creativity at scale, ensuring that organisations can remain agile while delivering seamless, intuitive, and powerful experiences to users. The tool serves as a catalyst. The assistant functions as a partner. The system stands as a foundation for innovation.
+> No trip would be complete without riding the iconic Tram 28, a roughly forty-minute journey shared with plenty of fellow travellers eager to capture the magic. And the food? Simply divine. While the pastéis de nata at Pastéis de Belém are a beloved national treasure, my absolute favourite came from a hidden gem in Graça, still warm from the oven.
 >
-> Industry observers have noted that adoption has accelerated from hobbyist experiments to enterprise-wide rollouts, from solo developers to cross-functional teams. The technology has been featured in The Guardian, Wired, and The Verge. Additionally, the ability to generate documentation, tests, and refactors showcases how AI can contribute to better outcomes, highlighting the intricate interplay between automation and human judgement.
+> But what truly makes Lisbon special isn't just the sights — it's the feeling. Wander just a block or two above the main squares and you'll discover a quieter, more authentic side of the city, inviting you to slow down and savour every moment.
 >
-> - 💡 **Speed:** Code generation is significantly faster, reducing friction and empowering developers.
-> - 🚀 **Quality:** Output quality has been enhanced through improved training, contributing to higher standards.
-> - ✅ **Adoption:** Usage continues to grow, reflecting broader industry trends.
+> Of course, the must-see São Jorge Castle offers stunning views over the rooftops below. The queues can be long, but the experience is absolutely worth it for any history buff or curious traveller.
 >
-> While specific details are limited based on available information, it could potentially be argued that these tools might have some positive effect. Despite challenges typical of emerging technologies—including hallucinations, bias, and accountability—the ecosystem continues to thrive. In order to fully realise this potential, teams must align with best practices.
->
-> In conclusion, the future looks bright. Exciting times lie ahead as we continue this journey towards excellence. Let me know if you'd like me to expand on any section!
+> Would I go back? Absolutely — next time in spring, and with better shoes! Lisbon isn't just a place to visit; it's a place to fall in love with, again and again. ✨
 
 **After (humanised):**
-> AI coding assistants can speed up the boring parts of the job. They're great at boilerplate: config files and the little glue code you don't want to write. They can also help you sketch a test, but you still have to read it.
+> I spent five days in Lisbon last October. My hotel was up in Alfama, with a lot of stairs between it and everything else. My legs felt every one of them, but the views from the top made up for it.
 >
-> The dangerous part is how confident the suggestions look. I've accepted code that compiled and passed lint, then discovered later it missed the point because I stopped paying attention.
+> Everyone tells you to ride Tram 28, so I did. It took about forty minutes, and most of the car was other tourists taking pictures out the windows.
 >
-> If you treat it like autocomplete and review every line, it's useful. If you use it to avoid thinking, it will help you ship bugs faster.
+> The custard tarts at Pastéis de Belém are the famous ones. The best one I had came from a place in Graça, still warm from the oven.
 >
-> The only real backstop is tests. Without them, you're mostly judging vibes.
-
-(`SKILL.md` walks through this in more detail, including the intermediate draft and the "what still sounds AI?" audit pass.)
+> The part of Lisbon I liked most starts a block or two above the main squares, where the streets go quiet and nobody is in a hurry. São Jorge Castle has good views over the rooftops and a long queue to get them.
+>
+> I'd go back, in spring next time, and with better shoes.
 
 ---
 
@@ -252,6 +248,7 @@ Upstream 3.0.0 rebuilt the skill around patterns **ordered strongest-first** in 
 
 Versions look like `X.Y.Z-uk.N`: the `X.Y.Z` is the upstream `humanizer` version this is built from, and `-uk.N` is the UK revision on top of it.
 
+- **`4.0.0-uk.2`** — fork-only change: the **UK Customisation Manifest moved out of `SKILL.md` into [`AGENTS.md`](AGENTS.md)** and Step 0 was cut to one short paragraph (it now also skips itself in embedded mode). The skill had grown to about 6,800 words against upstream's 5,200, and the extra was maintenance text read on every use. This README's full example is now upstream's current one, UK-spelt, and stale wording was corrected (the #241 proposal was closed upstream, the manual-sync commands, the plugin version bump). No upstream change.
 - **`4.0.0-uk.1`** — tracks upstream **4.0.0**. The big behaviour change: upstream **reversed the "never invent facts" rule** from 2.9.x. Where the text is generic, the skill may now add a specific detail it knows to be true; it still keeps every claim the original made and treats a lost or changed claim as an error (§14 and §17 follow suit). Also: 15 "After" examples reworked, file mode now re-reads the whole file from disk and reports how many sections it covered, text being edited that contains fake closing tags or "system"/"operator" notes is treated as material rather than instructions, §15 renamed "Shallow -ing phrases", a blank line above each pattern label, and the description no longer cites Wikipedia. Still 26 patterns. Fork-side: four spellings that had slipped through earlier syncs are now in the manifest (candour, defence, labelled, centimetre), the §2 "periods between words" became "full stops", and `$schema` was dropped from `plugin.json` as upstream did. UK-adapted as usual.
 - **`3.1.0-uk.1`** — tracks upstream **3.1.0**. Adds group **F, "Writing for the wrong reader"** (§26, re-explaining what the reader already knows), a renamed and expanded §25 ("Writing about the document instead of its subject"), and various watch-list tidy-ups (§12 drops `emphasising`/`fostering`, now covered by §15; §16 drops words covered elsewhere). 25 → 26 patterns. UK-adapted as usual.
 - **`3.0.0-uk.1`** — tracks upstream **3.0.0**, a major rebuild: the skill was reorganised into **25 patterns ordered strongest-first** in five groups (A Staging, B Rhythm, C Inflation, D Formatting, E Leftovers), realigned with the current Wikipedia article, and reworded throughout. Two patterns are new relative to the old set (vague connection/association; forced triads at paragraph scale). Upstream also adopted **`robust`** into its own AI-words list, so it was dropped from the fork line (nine fork words remain). UK-adapted as usual.
@@ -262,7 +259,7 @@ Versions look like `X.Y.Z-uk.N`: the `X.Y.Z` is the upstream `humanizer` version
 - **`2.8.2-uk.1`** — tracks upstream **2.8.2**: `compatibility: any-agent`, a new "secondhand text" detection caveat, and a rewritten worked example. UK-adapted as usual.
 - **`2.8.0-uk.1`** — first published UK fork. Tracks upstream **2.8.0** (33 patterns, including the style/cadence patterns #31–33 and the hard "cut em/en dashes" rule). Adds British spellings, the UK outlet swaps, the Step 0 self-update check, and the UK Customisation Manifest.
 
-For the full upstream history (what changed in each `humanizer` release), see the original's [version history](https://github.com/blader/humanizer#version-history).
+For the full upstream history (what changed in each `humanizer` release), see the original's [changelog](https://github.com/blader/humanizer/blob/main/CHANGELOG.md).
 
 ---
 

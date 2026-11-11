@@ -1,27 +1,31 @@
 # AGENTS.md
 
-Guidance for an AI assistant (Claude Code, Codex, etc.) working in this repo. The most common job here is **pulling the latest upstream `humanizer` and re-applying the UK conversion** — this file is the recipe for that.
+Guidance for an AI assistant (Claude Code, Codex, etc.) working in this repo. The most common job here is **pulling the latest upstream `humanizer` and re-applying the UK conversion** — this file is the recipe for that, and it holds the **UK Customisation Manifest**.
 
 ## What this repo is
 
-A UK-English fork of [`blader/humanizer`](https://github.com/blader/humanizer), a Claude Code / OpenCode skill implemented entirely as Markdown. The runtime artifact is `SKILL.md` (YAML frontmatter + the editor prompt). There is no build step and no code to run. **`SKILL.md` is the source of truth.**
+A UK-English fork of [`blader/humanizer`](https://github.com/blader/humanizer), an agent skill implemented entirely as Markdown. The runtime artifact is `SKILL.md` (YAML frontmatter + the editor prompt). There is no build step and no code to run. **`SKILL.md` is the source of truth for the skill.**
 
-This fork is intended to be a *minimal, well-documented delta* over upstream: the same skill, with British spellings and one example outlet swapped. Every intended difference is listed inside `SKILL.md` under **"UK Customisation Manifest" (sections A–H)**. Do not introduce UK-specific changes that aren't captured there — add them to the manifest first.
+This fork is intended to be a *minimal, well-documented delta* over upstream: the same skill, with British spellings, one example's outlets swapped, a short update check, and a few extra AI-vocabulary words. Every intended difference is listed in the **UK Customisation Manifest** below (sections A–H). Do not introduce UK-specific changes that aren't captured there — add them to the manifest first.
+
+The manifest lives here rather than in `SKILL.md` because every word of `SKILL.md` is read on each use of the skill. Maintenance instructions do not belong in the prompt.
 
 ## Key files
 
-- `SKILL.md` — the skill, plus two fork-only sections near the top: **"Step 0: Update Check"** and the **"UK Customisation Manifest."** Source of truth.
+- `SKILL.md` — the skill, plus one short fork-only section near the top, **"Step 0: Update check"**. Source of truth.
+- `AGENTS.md` — this file: the sync recipe and the manifest.
 - `README.md` — for humans: what it does, install, usage, how to update.
-- `AGENTS.md` — this file.
+- `.claude-plugin/plugin.json` — the Claude plugin manifest. Its `"version"` must match `SKILL.md`.
+- `.claude-plugin/marketplace.json` — lets users add this repo as a Claude plugin marketplace.
 - `LICENSE` — MIT.
 
 ## Versioning
 
 `X.Y.Z-uk.N`:
-- `X.Y.Z` mirrors the upstream `humanizer` version this fork is synced against (stored in `SKILL.md` frontmatter as `upstream-version`).
-- `-uk.N` increments when fork content/manifest changes without an upstream bump.
+- `X.Y.Z` mirrors the upstream `humanizer` version this fork is synced against (stored in `SKILL.md` frontmatter as `metadata.upstream-version`).
+- `-uk.N` increments when fork content changes without an upstream bump.
 
-The frontmatter `version:` is `X.Y.Z-uk.N`; `upstream-version:` is the plain `X.Y.Z`.
+`metadata.version` in `SKILL.md` and `"version"` in `.claude-plugin/plugin.json` are both `X.Y.Z-uk.N`; `metadata.upstream-version` is the plain `X.Y.Z`.
 
 ## How to update from upstream (the main task)
 
@@ -31,33 +35,124 @@ The frontmatter `version:` is `X.Y.Z-uk.N`; `upstream-version:` is the plain `X.
    ```
    (or read the raw file directly: `https://raw.githubusercontent.com/blader/humanizer/main/SKILL.md`).
 
-2. **Compare versions.** Read upstream's frontmatter `version:` and this fork's `upstream-version:`. Equal → nothing to do. Different → continue.
+2. **Compare versions.** Read upstream's `metadata.version` and this fork's `metadata.upstream-version`. Equal → nothing to do. Different → continue.
 
-3. **Re-apply the UK Customisation Manifest.** Start from the *fresh upstream content* and work through manifest sections A–H in order. The manifest names patterns by title because upstream renumbers them; where this summary and the manifest differ, the manifest wins:
-   - **A. Frontmatter** — `name: humaniser`; keep `upstream-source` / `upstream-repo` / `upstream-version` under `metadata:`; add the "UK English variant" line to `description`. Do **not** re-add `allowed-tools` or `compatibility` (upstream dropped them for cross-agent portability).
-   - **B. Spelling table** — apply the US→UK whole-word, case-preserving substitutions (colour, analyse, organisation, judgement, colonisation, memoisation, etc.). Do **not** touch the exclusions (`license: MIT`, code identifiers, URLs, the curly-quote typography example).
-   - **C. Targeted phrase swaps** — in the dashes pattern, "Replace each dash with a period, ..." → "... a full stop, ..."; treat any other punctuation-sense "period(s)" the same way.
-   - **D. Example outlet swaps** — the prestige-list example in the "Borrowed authority" pattern (Before and After): US/Indian papers → *The Times* / *The Guardian*.
-   - **E. Title** — `# Humaniser: ...`.
-   - **F. Preserve** the Step 0 section and the manifest itself.
-   - **G.** Leave upstream's *own* prose em dashes alone (the no-em-dash rule is for humanised output, not this file).
-   - **H. Fork addition** — after upstream's overused-AI-words list, re-append the labelled "Also (UK fork additions):" line; drop any word upstream has since adopted.
+3. **Re-apply the UK Customisation Manifest.** Start from the *fresh upstream content* and work through manifest sections A–H below, in order.
 
-4. **Bump the version.** Set `upstream-version:` to the new upstream `X.Y.Z` and `version:` to `X.Y.Z-uk.1` (use `-uk.N+1` if only the manifest changed without an upstream bump).
+4. **Bump the version.** Set `metadata.upstream-version` to the new upstream `X.Y.Z` and `metadata.version` to `X.Y.Z-uk.1` (use `-uk.N+1` if only fork content changed without an upstream bump).
 
    **Also bump `.claude-plugin/plugin.json` `"version"` to the same `X.Y.Z-uk.N`.** Plugin installs only treat the skill as updated when this field changes, so skipping it leaves every plugin install on the old version even after you push.
 
-5. **Sanity-check the diff.** Spelling subs are mechanical, but larger upstream rewrites (new pattern sections, restructures) deserve a read. Confirm no US spellings leaked into the body and no UK changes leaked into excluded content.
+5. **Sanity-check the diff.** Spelling subs are mechanical, but larger upstream rewrites (new pattern sections, restructures) deserve a read. Diff the result against upstream and confirm the only differences are manifest ones: no US spellings leaked into the body and no UK changes leaked into excluded content.
 
-6. **Update `README.md`** if the user-facing summary or version number should change.
+6. **Update `README.md`.** Bump the version line, add a version-history entry, and bring the pattern table, the full example (upstream's README example, UK-spelt) and any behaviour summary into line with the new upstream.
 
-7. **Commit and push.** Then other machines `git pull`; the Claude app copy gets re-uploaded.
+7. **Commit and push.** Then refresh the installed copies: `git pull` in each cloned skill directory (`~/.claude/skills/humaniser` for Claude Code), and update the plugin wherever it was installed from the marketplace. A copy uploaded to the Claude app by hand must be re-uploaded.
 
-> The skill's built-in "Step 0: Update Check" only *detects* staleness — it flags when upstream has moved and defers the actual sync to this repo protocol. It deliberately does **not** rewrite the running skill in place (that caused drift and stray edits). So the real update always happens here, in the repo, exactly as above.
+> The skill's built-in "Step 0: Update check" only *detects* staleness — it flags when upstream has moved and defers the actual sync to this repo protocol. It deliberately does **not** rewrite the running skill in place (that caused drift and stray edits). So the real update always happens here, in the repo, exactly as above.
+
+## UK Customisation Manifest
+
+These are the only intended differences from upstream. Upstream renumbers and regroups patterns between releases, so the entries below name patterns by title, with the current section number as a hint only.
+
+### A. Frontmatter
+
+Upstream uses the Agent Skills frontmatter shape: `name`, `description`, `license`, and a `metadata:` block holding `version`. Re-apply on top of that:
+
+- `name: humanizer` → `name: humaniser`
+- Add a sentence to the `description` block noting it is a UK English variant.
+- Under `metadata:`, keep or set these fields:
+  - `version: "X.Y.Z-uk.N"` — the upstream version number with a `-uk.N` suffix
+  - `upstream-version: "X.Y.Z"` — the upstream version this fork was synced against
+  - `upstream-repo: https://github.com/blader/humanizer`
+  - `upstream-source: https://raw.githubusercontent.com/blader/humanizer/main/SKILL.md`
+- Do **not** re-add `allowed-tools` or `compatibility`. Upstream dropped them for cross-agent portability, and Step 0's fetch needs no whitelist.
+
+### B. Spelling substitutions (global, case-preserving)
+
+Apply these as whole-word replacements. Preserve case (e.g. `Color` → `Colour`, `COLOR` → `COLOUR`).
+
+| US | UK |
+|---|---|
+| humanize / humanizer / humanized / humanizing | humanise / humaniser / humanised / humanising |
+| analyze / analyzed / analyzing | analyse / analysed / analysing |
+| emphasize / emphasized / emphasizing | emphasise / emphasised / emphasising |
+| symbolize / symbolizing | symbolise / symbolising |
+| decentralize / decentralization | decentralise / decentralisation |
+| categorize / categorized / categorizing | categorise / categorised / categorising |
+| regularize | regularise |
+| organize / organization / organizational / organizations | organise / organisation / organisational / organisations |
+| realize / realized / realizing | realise / realised / realising |
+| optimize / optimized / optimizing | optimise / optimised / optimising |
+| capitalize | capitalise |
+| memoization | memoisation |
+| colonization | colonisation |
+| color / colors / colored | colour / colours / coloured |
+| behavior / behaviors / behavioral | behaviour / behaviours / behavioural |
+| humor | humour |
+| favor / favored / favoring / favorable / favorite | favour / favoured / favouring / favourable / favourite |
+| judgment | judgement |
+| acknowledgment | acknowledgement |
+| artifact / artifacts | artefact / artefacts (in non-technical senses; leave Claude Code "Artifacts" feature name alone if encountered) |
+| skeptical | sceptical |
+| mislabeling | mislabelling |
+| totaling | totalling |
+| toward (preposition, when not part of "towards" already) | towards |
+| backward (adverb) | backwards |
+| neighborhood / neighborhoods | neighbourhood / neighbourhoods |
+| traveler / travelers / traveling | traveller / travellers / travelling |
+| savor / savoring | savour / savouring |
+| story / stories (building floor sense, e.g. six-story) | storey / storeys |
+| candor | candour |
+| defense | defence |
+| labeled / labeling | labelled / labelling |
+| centimeter / meter (unit of length) and similar `-meter` units | centimetre / metre |
+| other unlisted `-ize`/`-ization` verbs (recognize, specialize, prioritize, standardize, …) | `-ise`/`-isation` (recognise, specialise, prioritise, standardise, …) |
+
+Do **not** change:
+- `license: MIT` (a standard term)
+- `program` (in software contexts; "programme" only for broadcast/event senses, which don't appear here)
+- Straight-vs-curly quote example content (it's about typography, not dialect)
+- Proper nouns, code identifiers, URLs, the word "behaviors" inside YAML keys if any appear
+
+### C. Targeted phrase swaps
+
+- In the **dashes pattern** (currently §8, "Dashes as the universal connector"), change the replacement-preference phrase "Replace each dash with a period, comma, colon, or parentheses" → "Replace each dash with a full stop, comma, colon, or parentheses". Treat any other punctuation-sense "period(s)" the same way ("full stop(s)"), such as "with periods between words" in the one-line-closers pattern (currently §2).
+
+### D. Example outlet swaps
+
+In the **prestige-list example** (currently the "Borrowed authority" pattern, §17):
+- "Before" block: `The New York Times` → `The Times`, and `The Hindu` → `The Guardian`.
+- "After" block: replace any surviving US/Indian outlet with its Before-block UK counterpart (e.g. `New York Times` → `Times`), so the After stays consistent with the swapped Before.
+
+If any other example names a US/Indian outlet as the illustration's own voice, swap it to *The Guardian* / *The Times* too.
+
+Leave genuine Wikipedia-style geographic/cultural examples (Catalonia, Korattur / Chennai, the Texas temple, Ethiopia, Somali cuisine, Gallery 825, the Haolai River, Rajhans Orchestra / Pakistan) **unchanged** — altering them would distort the source material.
+
+### E. Title change
+
+- `# Humanizer: remove AI writing patterns` → `# Humaniser: remove AI writing patterns` (match upstream's current casing; earlier upstreams used Title Case, so adjust to whatever upstream currently ships).
+
+### F. Preserve the Step 0 section
+
+"Step 0: Update check" is a fork addition. Copy it from the current fork `SKILL.md` and place it after the intro line, before "Why AI text sounds the way it does". Keep it short: it is read on every use. Do not move the manifest back into `SKILL.md`.
+
+### G. Leave upstream's own em dashes alone
+
+Upstream's explanatory prose may use an em dash in its own sentences. The dashes pattern's "no em dashes" rule is guidance for *humanised output*, not for the skill file — keep upstream's own punctuation verbatim rather than rewriting it.
+
+### H. Fork addition — extra AI-vocabulary words
+
+Unlike A–G (which only re-shape upstream), this is the fork's one deliberate **content** addition. After upstream's overused-AI-words list (currently §12, "Overused AI words"), append a separate **"Also (UK fork additions):"** line with these extra words, each with its carve-out. Copy the line from the current fork `SKILL.md`; it holds:
+
+> seamless; harness (verb); streamline; empower; holistic; utilise/utilize (where "use" would do; keep the metric noun *utilisation*); navigate (figurative "navigating the complexities of…", not literal "navigate to the page"); unlock (figurative "unlock your potential/insights", not "unlock a feature/account"); elevate (figurative "elevate your brand/writing", not literal/medical "elevated").
+
+These were proposed upstream in [blader/humanizer#241](https://github.com/blader/humanizer/issues/241), which was closed as not planned on 6 September 2026, so they are a standing fork addition. Upstream adopted `robust` on its own in 3.0.0, and it was dropped from this line (nine words remain). Keep the rest as a separate, labelled line so upstream's own list stays a clean diff; drop any further word if upstream later adopts it.
 
 ## Editing rules
 
 - Preserve valid YAML frontmatter (formatting and indentation).
 - The prompt below the frontmatter is the product — edit it like a careful instruction document, not code.
+- Keep `SKILL.md` close to upstream's size. Upstream caps its own at 5,500 words; anything about maintaining the fork goes in this file.
 - Keep the fork a thin layer over upstream. If you find yourself wanting to change wording beyond the manifest, reconsider — or capture it as a new manifest item so the next sync re-applies it.
-- **Never `git merge upstream/main` into `main`.** This is a manual re-apply fork, not a merge fork: upstream and this fork diverge by design (spelling + the fork-only sections), so a merge would produce conflicts and US spellings. The `upstream` remote is for fetching and diffing only.
+- **Never `git merge upstream/main` into `main`.** This is a manual re-apply fork, not a merge fork: upstream and this fork diverge by design (spelling + the fork-only section), so a merge would produce conflicts and US spellings. The `upstream` remote is for fetching and diffing only.
