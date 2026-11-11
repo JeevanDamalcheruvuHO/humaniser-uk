@@ -17,6 +17,7 @@ The manifest lives here rather than in `SKILL.md` because every word of `SKILL.m
 - `README.md` — for humans: what it does, install, usage, how to update.
 - `.claude-plugin/plugin.json` — the Claude plugin manifest. Its `"version"` must match `SKILL.md`.
 - `.claude-plugin/marketplace.json` — lets users add this repo as a Claude plugin marketplace.
+- `scripts/sync-upstream.py` — applies the manifest to upstream's `SKILL.md` mechanically. `--check` verifies that the current `SKILL.md` is exactly upstream plus the manifest. Standard library only.
 - `scripts/check-fork.py` — checks the fork after a sync: versions agree, no US spellings or US dates leaked, README pattern names match, and `SKILL.md` has not grown past upstream. Standard library only.
 - `LICENSE` — MIT.
 
@@ -38,13 +39,17 @@ The manifest lives here rather than in `SKILL.md` because every word of `SKILL.m
 
 2. **Compare versions.** Read upstream's `metadata.version` and this fork's `metadata.upstream-version`. Equal → nothing to do. Different → continue.
 
-3. **Re-apply the UK Customisation Manifest.** Start from the *fresh upstream content* and work through manifest sections A–H below, in order.
+3. **Re-apply the UK Customisation Manifest.** Run:
+   ```
+   python3 scripts/sync-upstream.py
+   ```
+   It fetches upstream, rebuilds `SKILL.md` from the *fresh upstream content* with manifest sections A–H applied, carries Step 0 and the extra AI-words line over from the current `SKILL.md`, and sets the versions in `SKILL.md` and `plugin.json` (so step 4 is done for you). Each `REVIEW:` line it prints is a manifest item it could not apply, usually because upstream reworded the passage or adopted a fork word. Resolve each one by hand, following the manifest below, and update the script so the next sync handles it. If the script cannot run, apply sections A–H by hand.
 
 4. **Bump the version.** Set `metadata.upstream-version` to the new upstream `X.Y.Z` and `metadata.version` to `X.Y.Z-uk.1` (use `-uk.N+1` if only fork content changed without an upstream bump).
 
    **Also bump `.claude-plugin/plugin.json` `"version"` to the same `X.Y.Z-uk.N`.** Plugin installs only treat the skill as updated when this field changes, so skipping it leaves every plugin install on the old version even after you push.
 
-5. **Sanity-check the diff.** Run `python3 scripts/check-fork.py` and fix anything it reports. Spelling subs are mechanical, but larger upstream rewrites (new pattern sections, restructures) deserve a read. Diff the result against upstream and confirm the only differences are manifest ones: no US spellings leaked into the body and no UK changes leaked into excluded content.
+5. **Sanity-check the diff.** Read `git diff SKILL.md`: the script converts spellings it knows, so look for new US spellings, new US outlets or examples, and new sections that need a manifest decision. Then run `python3 scripts/check-fork.py` and fix anything it reports; it also confirms `SKILL.md` is exactly upstream plus the manifest. Spelling subs are mechanical, but larger upstream rewrites (new pattern sections, restructures) deserve a read. Diff the result against upstream and confirm the only differences are manifest ones: no US spellings leaked into the body and no UK changes leaked into excluded content.
 
 6. **Update `README.md`.** Bump the version line, add a version-history entry, and bring the pattern table, the full example (upstream's README example, UK-spelt) and any behaviour summary into line with the new upstream.
 
@@ -156,5 +161,6 @@ These were proposed upstream in [blader/humanizer#241](https://github.com/blader
 - Preserve valid YAML frontmatter (formatting and indentation).
 - The prompt below the frontmatter is the product — edit it like a careful instruction document, not code.
 - Keep `SKILL.md` close to upstream's size. Upstream caps its own at 5,500 words; anything about maintaining the fork goes in this file.
+- The manifest is the specification and `scripts/sync-upstream.py` is its mechanical form. Change them together: a UK change made only in `SKILL.md` is lost at the next sync, and `check-fork.py` will fail until the script reproduces it. Step 0 and the extra AI-words line are the exception; edit those in `SKILL.md` and the script carries them over.
 - Keep the fork a thin layer over upstream. If you find yourself wanting to change wording beyond the manifest, reconsider — or capture it as a new manifest item so the next sync re-applies it.
 - **Never `git merge upstream/main` into `main`.** This is a manual re-apply fork, not a merge fork: upstream and this fork diverge by design (spelling + the fork-only section), so a merge would produce conflicts and US spellings. The `upstream` remote is for fetching and diffing only.

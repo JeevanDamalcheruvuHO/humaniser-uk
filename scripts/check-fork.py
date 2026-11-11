@@ -204,6 +204,13 @@ else:
         upstream_headings = pattern_headings(upstream)
         if len(upstream_headings) != len(headings):
             fail(f"SKILL.md has {len(headings)} patterns, upstream has {len(upstream_headings)}")
+        sync = ROOT / "scripts" / "sync-upstream.py"
+        if sync.exists():
+            rebuilt = subprocess.run([sys.executable, str(sync), "--check"],
+                                     capture_output=True, text=True)
+            if rebuilt.returncode:
+                fail("SKILL.md is not upstream plus the manifest "
+                     "(run: python3 scripts/sync-upstream.py --check)")
         limit = len(upstream.split()) + FORK_WORD_ALLOWANCE
         if words > limit:
             fail(f"SKILL.md is {words} words; upstream is {len(upstream.split())} "

@@ -107,7 +107,7 @@ grep 'upstream-version:' SKILL.md                       # what this fork is buil
 git diff <last-synced-upstream-commit> upstream/main -- SKILL.md
 ```
 
-**3. Convert to the UK version.** Apply the new upstream changes to `SKILL.md`, then walk the **UK Customisation Manifest** (sections A–H) so the British spellings, the *Guardian/Times* example swap, and the fork-only sections are re-applied. This is fiddly by hand, so the simplest path is to ask an AI assistant — *"update this fork to the latest upstream and re-apply the UK manifest"* — and point it at [`AGENTS.md`](AGENTS.md), which is the exact step-by-step recipe. Then bump the version in three places: `version: X.Y.Z-uk.1` and `upstream-version: X.Y.Z` under `metadata:` in `SKILL.md`, and `"version"` in `.claude-plugin/plugin.json` (plugin installs only update when that field changes). Add a line to this README's version history.
+**3. Convert to the UK version.** Run `python3 scripts/sync-upstream.py`. It rebuilds `SKILL.md` from the new upstream with the **UK Customisation Manifest** (sections A–H) applied — British spellings, the *Guardian/Times* example swap, Step 0 and the extra words — and sets the version in `SKILL.md` and `.claude-plugin/plugin.json`. Anything it could not apply is printed as a `REVIEW:` line to settle by hand, following [`AGENTS.md`](AGENTS.md). Then read the diff, update this README (version line, pattern table, full example) and add a line to its version history. An AI assistant pointed at `AGENTS.md` can do all of this for you.
 
 **4. Check and publish it:**
 
