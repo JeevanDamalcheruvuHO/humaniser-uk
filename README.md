@@ -18,7 +18,7 @@ This skill spots those tics and rewrites them out, then does a second pass on it
 
 ## Get it on your devices
 
-You use Claude in more than one place, so there are two ways in. Do whichever ones you use.
+Pick the section for each place you want it: Claude Code, the Claude app, Codex, or another agent.
 
 ### On your computer (Claude Code in the terminal)
 
@@ -47,13 +47,34 @@ Use one install route per surface. If you already copied the skill into `~/.clau
 
 **Fallback: upload it once by hand.** Download this repo (green **Code** button → **Download ZIP**), then in **Settings → Capabilities** (it may say **Skills**) add a skill pointing at the folder with `SKILL.md` inside. This copy does not update itself; re-upload it after each release.
 
-### Other agents (Codex, pi, Cursor and the rest)
+### On Codex
 
-The skill is plain Markdown, so it is not tied to Claude. These routes mirror the original's and have had less testing here than the Claude ones.
+Install it with the Skills CLI (you need Node.js, which provides `npx`):
 
-- **Codex:** `npx skills add JeevanDamalcheruvuHO/humaniser-uk --global --agent codex`
-- **pi:** `pi install git:github.com/JeevanDamalcheruvuHO/humaniser-uk` (`pi update --extensions` pulls new versions)
-- **Every agent the Skills CLI supports** (Gemini CLI, GitHub Copilot, Windsurf, …): `npx skills add JeevanDamalcheruvuHO/humaniser-uk --global --agent '*'`
+```bash
+npx skills add JeevanDamalcheruvuHO/humaniser-uk --global --agent codex
+```
+
+It asks you to confirm, then puts the skill in `~/.agents/skills/humaniser`. Leave off `--global` to install it only in the current project. Run the same command again to pick up a new release.
+
+### Other agents (pi, Cursor and the rest)
+
+The skill is plain Markdown, so it is not tied to Claude or Codex. These routes mirror the original's and have not been tried with this fork.
+
+- **Every agent the Skills CLI supports** (Gemini CLI, GitHub Copilot, Windsurf, …):
+
+  ```bash
+  npx skills add JeevanDamalcheruvuHO/humaniser-uk --global --agent '*'
+  ```
+
+- **pi:**
+
+  ```bash
+  pi install git:github.com/JeevanDamalcheruvuHO/humaniser-uk
+  ```
+
+  `pi update --extensions` pulls new versions.
+
 - **Cursor:** the repo carries a Cursor plugin manifest in `.cursor-plugin/`.
 - **Anything else:** copy `SKILL.md` into the agent's skill folder.
 
