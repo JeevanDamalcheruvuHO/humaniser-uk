@@ -1,7 +1,7 @@
 {
   "name": "humaniser",
   "description": "UK English fork of humanizer: rewrite AI-sounding text so it reads like the writer without changing what it says.",
-  "version": "4.0.0-uk.3",
+  "version": "4.0.0-uk.4",
   "author": {
     "name": "Jeevan",
     "url": "https://github.com/JeevanDamalcheruvuHO"
