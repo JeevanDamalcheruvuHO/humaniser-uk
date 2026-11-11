@@ -36,6 +36,14 @@ cd ~/.claude/skills/humaniser && git pull
 
 *(Use OpenCode too? It reads the same `~/.claude/skills/` folder, so this single clone covers both.)*
 
+Prefer not to use git? The Skills CLI installs into the same folder (you need Node.js, which provides `npx`):
+
+```bash
+npx skills add JeevanDamalcheruvuHO/humaniser-uk --global --agent claude-code
+```
+
+Use the clone or this command, not both: they write to the same `~/.claude/skills/humaniser` folder. Run the command again to pick up a new release.
+
 ### On the Claude app (web, desktop, phone)
 
 **Recommended: install it as a plugin, so it stays current.** This repo is a Claude plugin marketplace. Installing from it means your account pulls the skill straight from GitHub, so a new release here is picked up by refreshing the plugin rather than re-uploading anything.
@@ -47,36 +55,54 @@ Use one install route per surface. If you already copied the skill into `~/.clau
 
 **Fallback: upload it once by hand.** Download this repo (green **Code** button → **Download ZIP**), then in **Settings → Capabilities** (it may say **Skills**) add a skill pointing at the folder with `SKILL.md` inside. This copy does not update itself; re-upload it after each release.
 
-### On Codex
+### On Codex and other agents (Skills CLI)
 
-Install it with the Skills CLI (you need Node.js, which provides `npx`):
+The skill is plain Markdown, so it is not tied to Claude. The [Skills CLI](https://github.com/vercel-labs/skills) installs it for about 80 coding agents. You need Node.js, which provides `npx`. For Codex:
 
 ```bash
 npx skills add JeevanDamalcheruvuHO/humaniser-uk --global --agent codex
 ```
 
-It asks you to confirm, then puts the skill in `~/.agents/skills/humaniser`. Leave off `--global` to install it only in the current project. Run the same command again to pick up a new release.
+It asks you to confirm, then puts the skill in `~/.agents/skills/humaniser`. For another agent, change the name after `--agent`:
 
-### Other agents (pi, Cursor and the rest)
+| Agent | `--agent` | Installs to |
+|---|---|---|
+| Claude Code | `claude-code` | `~/.claude/skills/` |
+| Codex | `codex` | `~/.agents/skills/` |
+| Cursor | `cursor` | `~/.cursor/skills/` |
+| OpenCode | `opencode` | `~/.config/opencode/skills/` |
+| Gemini CLI | `gemini-cli` | `~/.gemini/skills/` |
+| GitHub Copilot | `github-copilot` | `~/.copilot/skills/` |
+| Windsurf | `windsurf` | `~/.codeium/windsurf/skills/` |
+| Cline | `cline` | `~/.agents/skills/` |
+| Zed | `zed` | `~/.agents/skills/` |
+| Warp | `warp` | `~/.agents/skills/` |
+| pi | `pi` | `~/.agents/skills/` |
+| Goose | `goose` | `~/.config/goose/skills/` |
+| Amp | `amp` | `~/.config/agents/skills/` |
+| Roo Code | `roo` | `~/.roo/skills/` |
+| Kilo Code | `kilo` | `~/.kilo/skills/` |
+| Continue | `continue` | `~/.continue/skills/` |
+| Kiro CLI | `kiro-cli` | `~/.kiro/skills/` |
+| Junie | `junie` | `~/.junie/skills/` |
+| Qwen Code | `qwen-code` | `~/.qwen/skills/` |
+| Droid | `droid` | `~/.factory/skills/` |
+| OpenHands | `openhands` | `~/.openhands/skills/` |
 
-The skill is plain Markdown, so it is not tied to Claude or Codex. These routes mirror the original's and have not been tried with this fork.
+The names and paths are from Skills CLI 1.8.1; its [full list](https://github.com/vercel-labs/skills/blob/main/docs/agents.md) has the rest. Only the Codex row has been tried with this fork.
 
-- **Every agent the Skills CLI supports** (Gemini CLI, GitHub Copilot, Windsurf, …):
+To install for every supported agent at once:
 
-  ```bash
-  npx skills add JeevanDamalcheruvuHO/humaniser-uk --global --agent '*'
-  ```
+```bash
+npx skills add JeevanDamalcheruvuHO/humaniser-uk --global --agent '*'
+```
 
-- **pi:**
+Leave off `--global` in any of these to install only in the current project. Run the same command again to pick up a new release.
 
-  ```bash
-  pi install git:github.com/JeevanDamalcheruvuHO/humaniser-uk
-  ```
+Two agents can also install without the Skills CLI, and for anything else you can copy `SKILL.md` into the agent's skill folder:
 
-  `pi update --extensions` pulls new versions.
-
+- **pi:** `pi install git:github.com/JeevanDamalcheruvuHO/humaniser-uk` (`pi update --extensions` pulls new versions).
 - **Cursor:** the repo carries a Cursor plugin manifest in `.cursor-plugin/`.
-- **Anything else:** copy `SKILL.md` into the agent's skill folder.
 
 ---
 
